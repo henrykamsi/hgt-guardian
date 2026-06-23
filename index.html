@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HGT Guardian SDK | Developer Portal</title>
+    <meta name="description" content="HGT Guardian SDK: A serverless client-side security verification framework.">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-glow: #6366f1;
+            --accent-glow-rgb: 99, 102, 241;
+            --code-bg: rgba(15, 23, 42, 0.6);
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(15, 23, 42, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-glow: #4f46e5;
+            --accent-glow-rgb: 79, 70, 229;
+            --code-bg: rgba(255, 255, 255, 0.8);
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            transition: background 0.3s ease, color 0.3s ease, border 0.3s ease;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 120px; 
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+        }
+
+        .brand-container h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-primary), var(--accent-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        main {
+            flex: 1;
+            width: 90%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1rem 0;
+        }
+
+        #hero-section {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        #hero-section h2 { font-size: 2.8rem; margin-bottom: 1rem; }
+        #hero-section p { color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem; }
+
+        .btn-primary {
+            background: var(--accent-glow);
+            color: #fff;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(var(--accent-glow-rgb), 0.4);
+        }
+
+        #portal-section { display: none; }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .use-case-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .use-case-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .use-case-btn.active {
+            background: var(--accent-glow);
+            color: white;
+            border-color: var(--accent-glow);
+        }
+
+        .code-container {
+            background: var(--code-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-container pre {
+            font-family: 'Consolas', monospace;
+            font-size: 0.95rem;
+            color: #a5b4fc;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover { background: var(--accent-glow); color: white; }
+
+        .bottom-nav-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border-radius: 100px;
+            display: none;
+            justify-content: space-around;
+            padding: 0.75rem;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 700;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            background: var(--accent-glow);
+            color: #fff;
+        }
+
+        .platform-pane { display: none; }
+        .platform-pane.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-container"><h1>HGT Guardian SDK</h1></div>
+        <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">Dark Mode</button>
+    </header>
+
+    <main>
+        <section id="hero-section">
+            <h2>Client-Side Cryptographic Security Interceptor</h2>
+            <p>Implement programmatic math challenges and hardware biometrics instantly.</p>
+            <button class="btn-primary" onclick="initializePortal()">Get Started</button>
+        </section>
+
+        <section id="portal-section">
+            <!-- Web Platform -->
+            <div id="pane-web" class="platform-pane active">
+                <div class="glass-panel">
+                    <h3>Web App Integration</h3>
+                    <div class="use-case-nav">
+                        <button class="use-case-btn active" onclick="switchUseCase('web', 'redirect', this)">Global Redirect</button>
+                        <button class="use-case-btn" onclick="switchUseCase('web', 'signup', this)">Sign-Up</button>
+                        <button class="use-case-btn" onclick="switchUseCase('web', 'login', this)">Login</button>
+                        <button class="use-case-btn" onclick="switchUseCase('web', 'master', this)">Master Suite</button>
+                    </div>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copySnippet('web-pre')">Copy</button>
+                        <pre id="web-pre"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Android Platform -->
+            <div id="pane-android" class="platform-pane">
+                <div class="glass-panel">
+                    <h3>Android Native (Kotlin)</h3>
+                    <div class="use-case-nav">
+                        <button class="use-case-btn active" onclick="switchUseCase('android', 'redirect', this)">Global Gate</button>
+                        <button class="use-case-btn" onclick="switchUseCase('android', 'signup', this)">Sign-Up Gate</button>
+                        <button class="use-case-btn" onclick="switchUseCase('android', 'login', this)">Login Gate</button>
+                        <button class="use-case-btn" onclick="switchUseCase('android', 'master', this)">Master Suite</button>
+                    </div>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copySnippet('android-pre')">Copy</button>
+                        <pre id="android-pre"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- iOS Platform -->
+            <div id="pane-ios" class="platform-pane">
+                <div class="glass-panel">
+                    <h3>iOS Native (Swift)</h3>
+                    <div class="use-case-nav">
+                        <button class="use-case-btn active" onclick="switchUseCase('ios', 'redirect', this)">Global Gate</button>
+                        <button class="use-case-btn" onclick="switchUseCase('ios', 'signup', this)">Sign-Up Gate</button>
+                        <button class="use-case-btn" onclick="switchUseCase('ios', 'login', this)">Login Gate</button>
+                        <button class="use-case-btn" onclick="switchUseCase('ios', 'master', this)">Master Suite</button>
+                    </div>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copySnippet('ios-pre')">Copy</button>
+                        <pre id="ios-pre"></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav-bar" id="navBar">
+        <button class="nav-item active" onclick="switchPlatform('web', this)">Web App</button>
+        <button class="nav-item" onclick="switchPlatform('android', this)">Android</button>
+        <button class="nav-item" onclick="switchPlatform('ios', this)">iOS</button>
+    </nav>
+
+    <script>
+        const sdkUrl = "https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js";
+
+        const codeRepository = {
+            web: {
+                redirect: `<!-- HGT Guardian: Global Redirect Module -->\n<script src="${sdkUrl}"><\/script>\n<script>\n  HGT_Guardian.init({\n    mode: 'global',\n    timeout: 15000,\n    brand: 'Henry Global Tech Industry'\n  });\n<\/script>`,
+                signup: `<!-- HGT Guardian: Sign-Up Protection -->\n<script src="${sdkUrl}"><\/script>\n<script>\n  HGT_Guardian.secureForm('#signup-form-id', {\n    mode: 'signup',\n    timeout: 15000,\n    brand: 'Henry Global Tech Industry'\n  });\n<\/script>`,
+                login: `<!-- HGT Guardian: Login Protection -->\n<script src="${sdkUrl}"><\/script>\n<script>\n  HGT_Guardian.secureForm('#login-form-id', {\n    mode: 'login',\n    timeout: 15000,\n    brand: 'Henry Global Tech Industry'\n  });\n<\/script>`,
+                master: `<!-- HGT Guardian: Unified Master Suite -->\n<script src="${sdkUrl}"><\/script>\n<script>\n  HGT_Guardian.init({\n    mode: 'full',\n    timeout: 15000,\n    autoGuard: true,\n    brand: 'Henry Global Tech Industry'\n  });\n<\/script>`
+            },
+            android: {
+                redirect: `// HGT Guardian Android - Global Gate\nval config = HGTConfig.Builder()\n    .setMode(Mode.GLOBAL_REDIRECT)\n    .setTimeout(15000)\n    .build()\nHGTGuardian.init(this, config)`,
+                signup: `// HGT Guardian Android - Sign-Up Gate\nHGTGuardian.secureAction(findViewById(R.id.btn_signup), Mode.SIGNUP, 15000)`,
+                login: `// HGT Guardian Android - Login Gate\nHGTGuardian.secureAction(findViewById(R.id.btnLogin), Mode.LOGIN, 15000)`,
+                master: `// HGT Guardian Android - Master Suite\nHGTGuardian.initializeMasterConfiguration(\n    applicationContext = this,\n    timeoutMillis = 15000,\n    enableAutoHooking = true\n)`
+            },
+            ios: {
+                redirect: `// HGT Guardian iOS - Global Gate\nlet interceptor = HGTGuardian.shared\ninterceptor.configure(mode: .globalRedirect, timeout: 15.0)\ninterceptor.triggerSecurityGate(on: self)`,
+                signup: `// HGT Guardian iOS - Sign-Up Gate\nHGTGuardian.shared.secureFormAction(target: signUpButton, event: .signUp, timeout: 15.0)`,
+                login: `// HGT Guardian iOS - Login Gate\nHGTGuardian.shared.secureFormAction(target: loginButton, event: .login, timeout: 15.0)`,
+                master: `// HGT Guardian iOS - Master Suite\nHGTGuardianMaster.bootstrap(\n    globalTimeout: 15.0,\n    autoInterceptionEnabled: true,\n    brandingString: "Henry Global Tech Industry"\n)`
+            }
+        };
+
+        function toggleTheme() {
+            const body = document.body;
+            body.toggleAttribute('data-theme', 'light');
+            document.getElementById('themeBtn').textContent = body.hasAttribute('data-theme') ? 'Dark Mode' : 'Light Mode';
+        }
+
+        function initializePortal() {
+            document.getElementById('hero-section').style.display = 'none';
+            document.getElementById('portal-section').style.display = 'block';
+            document.getElementById('navBar').style.display = 'flex';
+            ['web', 'android', 'ios'].forEach(platform => loadSnippet(platform, 'redirect'));
+        }
+
+        function switchPlatform(platformId, element) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            document.querySelectorAll('.platform-pane').forEach(pane => pane.style.display = 'none');
+            document.getElementById(`pane-${platformId}`).style.display = 'block';
+        }
+
+        function switchUseCase(platform, mode, element) {
+            element.closest('.glass-panel').querySelectorAll('.use-case-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            loadSnippet(platform, mode);
+        }
+
+        function loadSnippet(platform, mode) {
+            document.getElementById(`${platform}-pre`).textContent = codeRepository[platform][mode];
+        }
+
+        function copySnippet(targetId) {
+            const code = document.getElementById(targetId).textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById(targetId).previousElementSibling;
+                btn.textContent = "Copied!";
+                btn.style.background = "#22c55e";
+                setTimeout(() => {
+                    btn.textContent = "Copy";
+                    btn.style.background = "rgba(255,255,255,0.1)";
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

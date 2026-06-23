@@ -1,13 +1,10 @@
 /**
- * HGT Guardian SDK - Core Security Engine (v1.2)
+ * HGT Guardian SDK - Core Security Engine (v1.3 - Permanent Gate)
  * Powered by Henry Global Tech Industry (HGT)
- * 
- * Description: Permanent, user-centric human verification gate combining
- * cognitive math proofing and cryptographic hardware biometric attestation.
+ * * Flow: Diagnostic Loader + Checkbox -> 5s Loader -> 3 Math Stages -> Biometric -> Success or Access Declined
  */
 
 const HGT_Guardian = (function () {
-    // Core engine state container
     let state = {
         config: { mode: 'full', brand: 'Henry Global Tech Industry', autoGuard: true },
         currentStage: 1,
@@ -16,10 +13,6 @@ const HGT_Guardian = (function () {
         pulseIndex: 0
     };
 
-    /**
-     * Initializes the HGT Guardian Security Engine
-     * @param {Object} customConfig User configuration overrides
-     */
     function init(customConfig) {
         state.config = { ...state.config, ...customConfig };
         if (state.config.mode === 'full') {
@@ -28,7 +21,6 @@ const HGT_Guardian = (function () {
         }
     }
 
-    // Injects the glassmorphic overlay styles directly into the document head
     function injectStyles() {
         if (document.getElementById('hgt-guardian-styles')) return;
         const style = document.createElement('style');
@@ -36,15 +28,14 @@ const HGT_Guardian = (function () {
         style.innerHTML = `
             #hgt-overlay {
                 position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-                background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px); z-index: 9999999;
+                background: #0f172a; z-index: 9999999;
                 display: flex; flex-direction: column; align-items: center; justify-content: center;
                 font-family: 'Segoe UI', system-ui, sans-serif; color: #ffffff; padding: 20px; box-sizing: border-box;
             }
             .hgt-card {
-                background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1);
+                background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 24px; padding: 40px; text-align: center; max-width: 440px; width: 100%;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.3); box-sizing: border-box;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); box-sizing: border-box;
             }
             .hgt-spinner-box { position: relative; width: 80px; height: 80px; margin: 0 auto 24px; }
             .hgt-circle-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
@@ -52,39 +43,46 @@ const HGT_Guardian = (function () {
             .hgt-circle-poly {
                 fill: none; stroke: #3b82f6; stroke-width: 6; stroke-linecap: round;
                 stroke-dasharray: 226; stroke-dashoffset: 226;
-                animation: hgtDash 2.5s ease-in-out infinite;
+                animation: hgtDash 2s ease-in-out infinite;
             }
             @keyframes hgtDash {
                 0% { stroke-dashoffset: 226; }
-                50% { stroke-dashoffset: 50; transform: rotate(135deg); }
+                50% { stroke-dashoffset: 60; transform: rotate(135deg); }
                 100% { stroke-dashoffset: 226; transform: rotate(450deg); }
             }
             .hgt-brand { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 8px; font-weight: 600; }
-            .hgt-pulse-text { font-size: 18px; font-weight: 500; margin: 12px 0 24px; color: #f8fafc; min-height: 27px; }
-            .hgt-sub-status { font-size: 14px; color: #cbd5e1; opacity: 0.85; margin-top: 16px; }
+            .hgt-pulse-text { font-size: 20px; font-weight: 500; margin: 12px 0 16px; color: #f8fafc; min-height: 30px; }
+            .hgt-bot-text { font-size: 15px; color: #cbd5e1; margin-bottom: 24px; font-weight: 400; }
+            
+            /* Enhanced Visible Checkbox */
             .hgt-checkbox-container {
-                display: inline-flex; align-items: center; background: rgba(15, 23, 42, 0.4);
-                padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
-                cursor: pointer; transition: all 0.2s ease; margin-top: 15px;
+                display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.6);
+                padding: 16px 20px; border-radius: 12px; border: 2px solid #475569;
+                cursor: pointer; transition: all 0.2s ease; width: 100%; box-sizing: border-box;
             }
-            .hgt-checkbox-container:hover { border-color: rgba(59, 130, 246, 0.5); background: rgba(15, 23, 42, 0.6); }
-            .hgt-real-cb { width: 22px; height: 22px; cursor: pointer; accent-color: #3b82f6; margin-right: 14px; }
-            .hgt-cb-label { font-size: 15px; font-weight: 500; color: #e2e8f0; user-select: none; }
+            .hgt-checkbox-container:hover { border-color: #3b82f6; background: rgba(15, 23, 42, 0.8); }
+            .hgt-real-cb { width: 24px; height: 24px; cursor: pointer; accent-color: #3b82f6; margin-right: 14px; flex-shrink: 0; }
+            .hgt-cb-label { font-size: 16px; font-weight: 500; color: #f1f5f9; user-select: none; text-align: left; }
+            
             .hgt-math-form { margin-top: 20px; }
-            .hgt-math-question { font-size: 28px; font-weight: bold; margin-bottom: 20px; color: #ffffff; letter-spacing: 1px; }
+            .hgt-math-question { font-size: 32px; font-weight: bold; margin-bottom: 24px; color: #ffffff; }
             .hgt-input-field {
-                width: 100%; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(255,255,255,0.1);
-                border-radius: 12px; padding: 12px; font-size: 18px; color: #fff; text-align: center;
+                width: 100%; background: #0f172a; border: 2px solid #475569;
+                border-radius: 12px; padding: 14px; font-size: 20px; color: #fff; text-align: center;
                 outline: none; box-sizing: border-box; transition: border-color 0.2s;
             }
             .hgt-input-field:focus { border-color: #3b82f6; }
             .hgt-btn {
                 width: 100%; background: #3b82f6; color: white; border: none; border-radius: 12px;
-                padding: 14px; margin-top: 15px; font-size: 16px; font-weight: 600; cursor: pointer;
+                padding: 14px; margin-top: 16px; font-size: 16px; font-weight: 600; cursor: pointer;
                 transition: background 0.2s;
             }
             .hgt-btn:hover { background: #2563eb; }
-            .hgt-success-icon { font-size: 48px; color: #10b981; margin-bottom: 16px; }
+            
+            /* Access Declined Screen Styling */
+            .hgt-declined-title { font-size: 28px; font-weight: bold; color: #ef4444; margin-bottom: 12px; }
+            .hgt-declined-desc { font-size: 15px; color: #94a3b8; line-height: 1.6; margin-bottom: 24px; }
+            .hgt-danger-icon { font-size: 54px; color: #ef4444; margin-bottom: 16px; }
         `;
         document.head.appendChild(style);
     }
@@ -99,6 +97,11 @@ const HGT_Guardian = (function () {
                     <svg class="hgt-circle-svg"><circle class="hgt-circle-bg" cx="40" cy="40" r="36"></circle><circle class="hgt-circle-poly" cx="40" cy="40" r="36"></circle></svg>
                 </div>
                 <div class="hgt-pulse-text" id="hgt-pulse-msg">Authenticating...</div>
+                <div class="hgt-bot-text">HGT Guardian verifying you are not a bot.</div>
+                <div class="hgt-checkbox-container" id="hgt-cb-wrapper">
+                    <input type="checkbox" class="hgt-real-cb" id="hgt-verify-checkbox">
+                    <label class="hgt-cb-label" for="hgt-verify-checkbox">Verify that you are not a bot.</label>
+                </div>
             </div>
         `;
         document.body.appendChild(overlay);
@@ -109,59 +112,36 @@ const HGT_Guardian = (function () {
         if (state.pulseIndex < state.pulses.length) {
             document.getElementById('hgt-pulse-msg').innerText = state.pulses[state.pulseIndex];
             state.pulseIndex++;
-            setTimeout(cycleDiagnosticPulses, 1800);
-        } else {
-            renderAttestationGate();
+            setTimeout(cycleDiagnosticPulses, 1500);
         }
     }
 
-    function renderAttestationGate() {
-        document.getElementById('hgt-main-loader').style.display = 'none';
-        const pulseText = document.getElementById('hgt-pulse-msg');
-        pulseText.style.display = 'none';
+    // Fired when the checkbox is checked by the user
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.id === 'hgt-verify-checkbox') {
+            if (e.target.checked) {
+                // Hide checkbox interface
+                document.getElementById('hgt-cb-wrapper').style.display = 'none';
+                
+                // Show loader and set to exactly 5 seconds
+                document.getElementById('hgt-main-loader').style.display = 'block';
+                const pulseMsg = document.getElementById('hgt-pulse-msg');
+                pulseMsg.style.display = 'block';
+                pulseMsg.innerText = "Analyzing integrity environment...";
 
-        const cardBody = document.getElementById('hgt-card-body');
-        
-        const subStatus = document.createElement('div');
-        subStatus.className = 'hgt-sub-status';
-        subStatus.id = 'hgt-status-text';
-        subStatus.innerText = 'HGT Guardian verifying you are not a bot.';
-        cardBody.appendChild(subStatus);
-
-        const cbContainer = document.createElement('div');
-        cbContainer.className = 'hgt-checkbox-container';
-        cbContainer.id = 'hgt-cb-gate';
-        cbContainer.innerHTML = `
-            <input type="checkbox" class="hgt-real-cb" id="hgt-verify-checkbox">
-            <span class="hgt-cb-label">Verify that you are not a bot.</span>
-        `;
-        cardBody.appendChild(cbContainer);
-
-        document.getElementById('hgt-verify-checkbox').addEventListener('change', handleAttestationClick);
-    }
-
-    function handleAttestationClick(e) {
-        if (e.target.checked) {
-            document.getElementById('hgt-cb-gate').style.display = 'none';
-            document.getElementById('hgt-status-text').style.display = 'none';
-            document.getElementById('hgt-main-loader').style.display = 'block';
-            
-            const pulseText = document.getElementById('hgt-pulse-msg');
-            pulseText.style.display = 'block';
-            pulseText.innerText = 'Evaluating token integrity...';
-
-            setTimeout(() => {
-                state.currentStage = 1;
-                renderMathStage();
-            }, 5000); // Strict 5-second computation loader
+                setTimeout(() => {
+                    state.currentStage = 1;
+                    renderMathStage();
+                }, 5000); // 5-second execution loader
+            }
         }
-    }
+    });
 
     function generateMathQuestion() {
-        const num1 = Math.floor(Math.random() * 12) + 1;
-        const num2 = Math.floor(Math.random() * 12) + 1;
+        const num1 = Math.floor(Math.random() * 10) + 2;
+        const num2 = Math.floor(Math.random() * 10) + 2;
         state.currentAnswer = num1 + num2;
-        return `Calculate: ${num1} + ${num2}`;
+        return `${num1} + ${num2}`;
     }
 
     function renderMathStage() {
@@ -169,34 +149,28 @@ const HGT_Guardian = (function () {
         document.getElementById('hgt-pulse-msg').style.display = 'none';
         
         const cardBody = document.getElementById('hgt-card-body');
-        
-        let mathContainer = document.getElementById('hgt-math-container');
-        if (!mathContainer) {
-            mathContainer = document.createElement('div');
-            mathContainer.id = 'hgt-math-container';
-            cardBody.appendChild(mathContainer);
-        }
-
-        let stageLabel = '';
-        if (state.currentStage === 1) stageLabel = '1 of 1';
-        else if (state.currentStage === 2) stageLabel = '1 of 2';
-        else if (state.currentStage === 3) stageLabel = '1 of 3';
-
-        mathContainer.innerHTML = `
-            <div class="hgt-brand">Cognitive Challenge (${stageLabel})</div>
+        cardBody.innerHTML = `
+            <div class="hgt-brand">Verification Stage</div>
+            <div class="hgt-pulse-text">${getStageLabel()}</div>
             <div class="hgt-math-form">
-                <div class="hgt-math-question">${generateMathQuestion()}</div>
-                <input type="number" class="hgt-input-field" id="hgt-input" placeholder="Your Answer" autocomplete="off">
-                <button type="button" class="hgt-btn" id="hgt-submit-btn">Verify Answer</button>
+                <div class="hgt-math-question">${generateMathQuestion()} = ?</div>
+                <input type="number" class="hgt-input-field" id="hgt-input" placeholder="Enter Answer" autocomplete="off">
+                <button type="button" class="hgt-btn" id="hgt-submit-btn">Submit Answer</button>
             </div>
         `;
 
         document.getElementById('hgt-submit-btn').addEventListener('click', validateMathAnswer);
-        document.getElementById('hgt-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') validateMathAnswer();
+        document.getElementById('hgt-input').addEventListener('keypress', function(evt) {
+            if (evt.key === 'Enter') validateMathAnswer();
         });
-        
-        setTimeout(() => document.getElementById('hgt-input').focus(), 50);
+        document.getElementById('hgt-input').focus();
+    }
+
+    function getStageLabel() {
+        if (state.currentStage === 1) return "1 of 1";
+        if (state.currentStage === 2) return "1 of 2";
+        if (state.currentStage === 3) return "1 of 3";
+        return "";
     }
 
     function validateMathAnswer() {
@@ -209,67 +183,77 @@ const HGT_Guardian = (function () {
                 triggerHardwareBiometrics();
             }
         } else {
-            // Shake UI or reset to stage 1 on execution failure
-            state.currentStage = 1;
-            renderMathStage();
+            triggerAccessDeclined("Cognitive validation mismatch. Incorrect answer provided.");
         }
     }
 
     function triggerHardwareBiometrics() {
-        document.getElementById('hgt-math-container').style.display = 'none';
-        document.getElementById('hgt-main-loader').style.display = 'block';
-        
-        const pulseText = document.getElementById('hgt-pulse-msg');
-        pulseText.style.display = 'block';
-        pulseText.innerText = 'Initializing Hardware Biometrics...';
+        const cardBody = document.getElementById('hgt-card-body');
+        cardBody.innerHTML = `
+            <div class="hgt-brand">${state.config.brand}</div>
+            <div class="hgt-spinner-box">
+                <svg class="hgt-circle-svg"><circle class="hgt-circle-bg" cx="40" cy="40" r="36"></circle><circle class="hgt-circle-poly" cx="40" cy="40" r="36"></circle></svg>
+            </div>
+            <div class="hgt-pulse-text">Invoking Biometric Hardware...</div>
+        `;
 
-        // Feature detection for Native WebAuthn API
         if (window.PublicKeyCredential) {
-            // Mocking credential challenge payload structure for the OS level prompt handshake
             navigator.credentials.create({
                 publicKey: {
-                    challenge: new Uint8Array([11, 22, 33, 44]),
+                    challenge: new Uint8Array([32, 64, 96, 128]),
                     rp: { name: state.config.brand },
-                    user: { id: new Uint8Array([1]), name: "user@hgt", displayName: "HGT Client" },
+                    user: { id: new Uint8Array([9]), name: "secure@hgt", displayName: "HGT Operator" },
                     pubKeyCredParams: [{ type: "public-key", alg: -7 }],
                     timeout: 60000,
                     authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
                 }
             }).then((cred) => {
-                // Pass directly to runtime bridge interface for Native Apps
-                executeClearanceRedirect("biometric_authenticated");
+                executeSuccessClearance();
             }).catch((err) => {
-                console.warn("Hardware call bypassed or local hardware simulator used.");
-                executeClearanceRedirect("hardware_simulation_passed");
+                // If biometric validation fails or user cancels, throw Access Declined instantly
+                triggerAccessDeclined("Biometric signature verification failed or rejected by hardware.");
             });
         } else {
-            // Non-supported browsers fallback seamlessly
-            setTimeout(() => { executeClearanceRedirect("legacy_clearance"); }, 1500);
+            // Fallback strategy for environments without native biometric capabilities
+            setTimeout(executeSuccessClearance, 1500);
         }
     }
 
-    function executeClearanceRedirect(authStrategy) {
-        // Send status back to native wrapper runtime contexts if existing
+    function triggerAccessDeclined(reason) {
+        // Send failure statuses back to native application environments if running
         if (window.AndroidBridge && window.AndroidBridge.postMessage) {
-            window.AndroidBridge.postMessage(JSON.stringify({ status: "VERIFIED", strategy: authStrategy }));
+            window.AndroidBridge.postMessage(JSON.stringify({ status: "DECLINED", error: reason }));
         }
         if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.iOSBridge) {
-            window.webkit.messageHandlers.iOSBridge.postMessage({ status: "VERIFIED", strategy: authStrategy });
+            window.webkit.messageHandlers.iOSBridge.postMessage({ status: "DECLINED", error: reason });
         }
 
         const cardBody = document.getElementById('hgt-card-body');
-        document.getElementById('hgt-main-loader').style.display = 'none';
-        
-        const pulseText = document.getElementById('hgt-pulse-msg');
-        pulseText.className = "hgt-math-question";
-        pulseText.style.color = "#10b981";
-        pulseText.innerText = "Verification check, you are not a bot.";
+        cardBody.innerHTML = `
+            <div class="hgt-danger-icon">❌</div>
+            <div class="hgt-declined-title">Access Declined</div>
+            <div class="hgt-declined-desc">Security validation protocols failed. Automated or unrecognized system access signature detected.</div>
+            <button type="button" class="hgt-btn" style="background: #dc2626;" onclick="window.location.reload();">Retry Verification</button>
+        `;
+    }
+
+    function executeSuccessClearance() {
+        if (window.AndroidBridge && window.AndroidBridge.postMessage) {
+            window.AndroidBridge.postMessage(JSON.stringify({ status: "VERIFIED" }));
+        }
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.iOSBridge) {
+            window.webkit.messageHandlers.iOSBridge.postMessage({ status: "VERIFIED" });
+        }
+
+        const cardBody = document.getElementById('hgt-card-body');
+        cardBody.innerHTML = `
+            <div style="font-size: 54px; margin-bottom:16px;">✅</div>
+            <div class="hgt-math-question" style="color: #10b981; font-size: 24px;">Verification check, you are not a bot.</div>
+        `;
 
         setTimeout(() => {
             const overlay = document.getElementById('hgt-overlay');
             if (overlay) overlay.remove();
-            
-            // Custom redirect hook dispatchment
             if (typeof state.config.onSuccess === 'function') {
                 state.config.onSuccess();
             }

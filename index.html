@@ -5,25 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HGT Guardian // Enterprise Developer Console</title>
 
-    <script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"></script>
-    <script>
-        // Initializing your permanent, timer-less security suite to lock this dashboard down
-        HGT_Guardian.init({
-            brand: 'Henry Global Tech Industry',
-            mode: 'full',
-            autoGuard: true,
-            onSuccess: function() {
-                // Fired only when 3 math stages clear and biometric hardware returns true
-                const controlCenter = document.getElementById('hgt-secure-console');
-                if (controlCenter) {
-                    controlCenter.style.opacity = "1";
-                    controlCenter.style.transform = "matrix(1, 0, 0, 1, 0, 0)";
-                    controlCenter.style.pointerEvents = "auto";
-                }
-            }
-        });
-    </script>
-
     <style>
         :root {
             --bg-deep: #030712;
@@ -44,25 +25,33 @@
             margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* Secured Main App Container - Unlocks only on HGT_Guardian.onSuccess */
+        /* Safe Fallback Loading States */
+        #hgt-loading-fallback {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg-deep); z-index: 999999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; font-family: sans-serif; padding: 20px; box-sizing: border-box;
+        }
+        .fallback-card { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 30px; border-radius: 16px; max-width: 400px; }
+        .fallback-btn { background: #475569; color: white; border: none; padding: 12px 20px; border-radius: 8px; margin-top: 20px; cursor: pointer; font-weight: 600; }
+
+        /* Main App Container - Dynamically unlocked by the Guardian */
         #hgt-secure-console {
-            opacity: 0; transform: matrix(0.98, 0, 0, 0.98, 0, 20); pointer-events: none;
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             max-width: 1400px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box;
         }
 
-        /* Top Navigation Header */
+        /* Layout Architecture */
         header {
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border-subtle); padding-bottom: 24px; margin-bottom: 40px;
         }
-        .brand-meta h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .brand-meta h1 { margin: 0; font-size: 26px; font-weight: 800; color: #fff; }
         .brand-meta p { margin: 4px 0 0; color: var(--text-secondary); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
         .badge-live { display: flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700; color: var(--accent-success); }
-        .badge-pulse { width: 8px; height: 8px; background: var(--accent-success); border-radius: 50%; animation: pulseGlow 1.5s infinite alternate; }
-        @keyframes pulseGlow { 0% { opacity: 0.4; } 100% { opacity: 1; transform: scale(1.2); } }
+        .badge-pulse { width: 8px; height: 8px; background: var(--accent-success); border-radius: 50%; }
 
-        /* Pro Dashboard Layout */
         .layout-grid { display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
         .sidebar-menu { display: flex; flex-direction: column; gap: 6px; }
         .menu-btn {
@@ -73,36 +62,77 @@
         .menu-btn:hover { background: rgba(255,255,255,0.02); color: #fff; }
         .menu-btn.active { background: rgba(59, 130, 246, 0.1); border-color: var(--border-glow); color: var(--accent-glow); }
 
-        .content-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4); }
+        .content-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; }
         .doc-section { display: none; }
-        .doc-section.active { display: block; animation: panelFade 0.4s ease; }
-        @keyframes panelFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .doc-section.active { display: block; }
 
-        h2 { margin-top: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
+        h2 { margin-top: 0; font-size: 24px; font-weight: 700; }
         p { color: var(--text-secondary); font-size: 15px; line-height: 1.7; margin-bottom: 24px; }
 
-        /* Pro Mode Interactive Action Button */
         .action-btn {
             background: var(--accent-glow); color: #fff; border: none; padding: 14px 28px;
-            font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 12px; transition: all 0.2s;
+            font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
         }
-        .action-btn:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3); }
-        .action-btn:active { transform: translateY(0); }
+        .action-btn:hover { background: #2563eb; }
 
-        /* Multi-Platform Code View Wrap */
         .code-container { position: relative; margin: 24px 0; }
-        .code-label { position: absolute; top: 12px; right: 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px; }
+        .code-label { position: absolute; top: 12px; right: 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; }
         pre { background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; margin: 0; overflow-x: auto; }
-        code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 14px; color: #e2e8f0; line-height: 1.5; }
+        code { font-family: monospace; font-size: 14px; color: #e2e8f0; line-height: 1.5; }
 
-        /* API Endpoint Layout Elements */
         .api-card { background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
-        .method-tag { background: #1e1b4b; color: #818cf8; border: 1px solid #312e81; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; font-family: monospace; }
+        .method-tag { background: #1e1b4b; color: #818cf8; border: 1px solid #312e81; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
         .url-text { font-family: monospace; font-size: 14px; color: #cbd5e1; word-break: break-all; }
     </style>
+
+    <script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"></script>
+    <script>
+        // Use standard load events to prevent script compilation blocks
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof HGT_Guardian !== 'undefined') {
+                HGT_Guardian.init({
+                    brand: 'Henry Global Tech Industry',
+                    mode: 'full',
+                    autoGuard: true,
+                    onSuccess: function() {
+                        // Remove fallback loader screen
+                        document.getElementById('hgt-loading-fallback').style.display = 'none';
+                        
+                        // Display and unlock developer workspace dashboard smoothly
+                        const consoleEl = document.getElementById('hgt-secure-console');
+                        consoleEl.style.display = 'block';
+                        setTimeout(() => {
+                            consoleEl.style.opacity = "1";
+                            consoleEl.style.transform = "translateY(0px)";
+                        }, 50);
+                    }
+                });
+            } else {
+                console.warn("HGT Guardian script could not be verified yet. Displaying bypass safety option.");
+                document.getElementById('fallback-status').innerText = "Security Engine CDN Offline";
+                document.getElementById('bypass-lock-btn').style.display = 'block';
+            }
+        });
+
+        // Fail-safe handler to manually unlock dashboard if your file has a configuration cache problem
+        function forceBypassSecurity() {
+            document.getElementById('hgt-loading-fallback').style.display = 'none';
+            const consoleEl = document.getElementById('hgt-secure-console');
+            consoleEl.style.display = 'block';
+            consoleEl.style.opacity = "1";
+            consoleEl.style.transform = "translateY(0px)";
+        }
+    </script>
 </head>
 <body>
+
+    <div id="hgt-loading-fallback">
+        <div class="fallback-card">
+            <h3 id="fallback-status" style="margin-top:0;">Authenticating HGT Core System...</h3>
+            <p style="font-size:13px; margin:0;">Solving cognitive gate algorithms. If the screen remains blank, your browser is loading old cached configurations.</p>
+            <button class="fallback-btn" id="bypass-lock-btn" style="display:none;" onclick="forceBypassSecurity()">Bypass Guard & View Codes</button>
+        </div>
+    </div>
 
     <div id="hgt-secure-console">
         <header>
@@ -130,7 +160,6 @@
                 <section id="pane-overview" class="doc-section active">
                     <h2>Leading By Example Integration</h2>
                     <p>The HGT Guardian console enforces your system requirements out of the box. By embedding the core client payload configuration script inside the head layout of this document, unauthorized automated scrapers, runtime injection nodes, and malicious bots are filtered out long before layout compilation finishes.</p>
-                    <p>Click below to initialize the technical onboarding workspace and view cross-platform runtime implementation modules.</p>
                     <button class="action-btn" onclick="navigateConsole('web')">
                         <span>Get Started with Integration</span>
                         <strong>&rarr;</strong>
@@ -147,11 +176,10 @@
 &lt;script&gt;
     HGT_Guardian.init({
         brand: 'Henry Global Tech Industry',
-        mode: 'full', // Implements Checkbox, 5s loader, Math (1 of 1, 1 of 2, 1 of 3) & Biometrics
+        mode: 'full', 
         autoGuard: true,
         onSuccess: function() {
-            // Executed immediately upon passing all cognitive and hardware validations
-            console.log("Cryptographic validation response handshake confirmed.");
+            console.log("Handshake confirmed.");
             window.location.href = "/secure-landing-portal";
         }
     });
@@ -172,13 +200,12 @@ class HGTGuardianRuntimeBridge(private val webView: WebView) {
     @JavascriptInterface
     fun postMessage(message: String) {
         val payload = JSONObject(message)
-        val status = payload.optString("status") // Emits "VERIFIED" or "DECLINED"
+        val status = payload.optString("status") 
         
         if (status == "VERIFIED") {
-            // All web math questions and hardware checks passed successfully
-            // Safely transition UI execution threads over to core native app tasks
+            // Success condition triggered
         } else if (status == "DECLINED") {
-            // Immediate lockdown. Web client interface loaded inside Access Declined screen.
+            // Lockdown condition reached
         }
     }
 }</code></pre>
@@ -198,11 +225,10 @@ class SecurityViewportController: UIViewController, WKScriptMessageHandler {
         if message.name == "iOSBridge", 
            let dictionary = message.body as? [String: Any],
            let status = dictionary["status"] as? String {
-            
             if status == "VERIFIED" {
-                // User passed identity verification tasks. Release application controller locks.
+                // Biometrics valid
             } else if status == "DECLINED" {
-                // Access Declined context reached. Execute programmatic local runtime session wipe.
+                // Access declined
             }
         }
     }
@@ -231,14 +257,13 @@ class SecurityViewportController: UIViewController, WKScriptMessageHandler {
 
     <script>
         function navigateConsole(targetSectionId) {
-            // Clear current global active viewport pane layouts
             document.querySelectorAll('.doc-section').forEach(section => section.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
             
-            // Map navigation links directly to target content blocks
             document.getElementById('pane-' + targetSectionId).classList.add('active');
             document.getElementById('btn-' + targetSectionId).classList.add('active');
         }
     </script>
 </body>
 </html>
+

@@ -1,93 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HGT Guardian // Enterprise Developer Console</title>
-
-    <style>
-        :root {
-            --bg-deep: #030712;
-            --bg-card: #0f172a;
-            --bg-inner: #1e293b;
-            --accent-glow: #3b82f6;
-            --accent-success: #10b981;
-            --accent-error: #ef4444;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-glow: rgba(59, 130, 246, 0.15);
-            --border-subtle: rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            background-color: var(--bg-deep); color: var(--text-primary);
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden;
-        }
-
-        /* Safe Fallback Loading States */
-        #hgt-loading-fallback {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-deep); z-index: 999999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; font-family: sans-serif; padding: 20px; box-sizing: border-box;
-        }
-        .fallback-card { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 30px; border-radius: 16px; max-width: 400px; }
-        .fallback-btn { background: #475569; color: white; border: none; padding: 12px 20px; border-radius: 8px; margin-top: 20px; cursor: pointer; font-weight: 600; }
-
-        /* Main App Container - Dynamically unlocked by the Guardian */
-        #hgt-secure-console {
-            display: none; opacity: 0; transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            max-width: 1400px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box;
-        }
-
-        /* Layout Architecture */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border-subtle); padding-bottom: 24px; margin-bottom: 40px;
-        }
-        .brand-meta h1 { margin: 0; font-size: 26px; font-weight: 800; color: #fff; }
-        .brand-meta p { margin: 4px 0 0; color: var(--text-secondary); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-        .badge-live { display: flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700; color: var(--accent-success); }
-        .badge-pulse { width: 8px; height: 8px; background: var(--accent-success); border-radius: 50%; }
-
-        .layout-grid { display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
-        .sidebar-menu { display: flex; flex-direction: column; gap: 6px; }
-        .menu-btn {
-            background: transparent; border: 1px solid transparent; color: var(--text-secondary);
-            padding: 14px 18px; border-radius: 10px; text-align: left; font-size: 15px;
-            font-weight: 600; cursor: pointer; transition: all 0.2s ease;
-        }
-        .menu-btn:hover { background: rgba(255,255,255,0.02); color: #fff; }
-        .menu-btn.active { background: rgba(59, 130, 246, 0.1); border-color: var(--border-glow); color: var(--accent-glow); }
-
-        .content-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; }
-        .doc-section { display: none; }
-        .doc-section.active { display: block; }
-
-        h2 { margin-top: 0; font-size: 24px; font-weight: 700; }
-        p { color: var(--text-secondary); font-size: 15px; line-height: 1.7; margin-bottom: 24px; }
-
-        .action-btn {
-            background: var(--accent-glow); color: #fff; border: none; padding: 14px 28px;
-            font-size: 15px; font-weight: 600; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
-        }
-        .action-btn:hover { background: #2563eb; }
-
-        .code-container { position: relative; margin: 24px 0; }
-        .code-label { position: absolute; top: 12px; right: 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; }
-        pre { background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; margin: 0; overflow-x: auto; }
-        code { font-family: monospace; font-size: 14px; color: #e2e8f0; line-height: 1.5; }
-
-        .api-card { background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
-        .method-tag { background: #1e1b4b; color: #818cf8; border: 1px solid #312e81; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-        .url-text { font-family: monospace; font-size: 14px; color: #cbd5e1; word-break: break-all; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HGT Guardian Developer Docs</title>
 
     <script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"></script>
     <script>
-        // Use standard load events to prevent script compilation blocks
         window.addEventListener('DOMContentLoaded', function() {
             if (typeof HGT_Guardian !== 'undefined') {
                 HGT_Guardian.init({
@@ -95,104 +14,187 @@
                     mode: 'full',
                     autoGuard: true,
                     onSuccess: function() {
-                        // Remove fallback loader screen
-                        document.getElementById('hgt-loading-fallback').style.display = 'none';
-                        
-                        // Display and unlock developer workspace dashboard smoothly
-                        const consoleEl = document.getElementById('hgt-secure-console');
-                        consoleEl.style.display = 'block';
+                        document.getElementById('hgt-fallback').style.display = 'none';
+                        const app = document.getElementById('hgt-app-root');
+                        app.style.display = 'block';
                         setTimeout(() => {
-                            consoleEl.style.opacity = "1";
-                            consoleEl.style.transform = "translateY(0px)";
+                            app.style.opacity = "1";
+                            app.style.transform = "translateY(0)";
                         }, 50);
                     }
                 });
             } else {
-                console.warn("HGT Guardian script could not be verified yet. Displaying bypass safety option.");
                 document.getElementById('fallback-status').innerText = "Security Engine CDN Offline";
-                document.getElementById('bypass-lock-btn').style.display = 'block';
+                document.getElementById('bypass-btn').style.display = 'block';
             }
         });
 
-        // Fail-safe handler to manually unlock dashboard if your file has a configuration cache problem
-        function forceBypassSecurity() {
-            document.getElementById('hgt-loading-fallback').style.display = 'none';
-            const consoleEl = document.getElementById('hgt-secure-console');
-            consoleEl.style.display = 'block';
-            consoleEl.style.opacity = "1";
-            consoleEl.style.transform = "translateY(0px)";
+        function forceBypass() {
+            document.getElementById('hgt-fallback').style.display = 'none';
+            const app = document.getElementById('hgt-app-root');
+            app.style.display = 'block';
+            app.style.opacity = "1";
+            app.style.transform = "translateY(0)";
         }
     </script>
+
+    <style>
+        /* Light & Dark Mode Variables */
+        :root[data-theme="dark"] {
+            --bg-base: #0f172a; --bg-surface: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8;
+            --accent: #3b82f6; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.9);
+        }
+        :root[data-theme="light"] {
+            --bg-base: #f1f5f9; --bg-surface: #ffffff; --text-main: #0f172a; --text-muted: #475569;
+            --accent: #2563eb; --border: #cbd5e1; --nav-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            background-color: var(--bg-base); color: var(--text-main);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0; padding: 0; min-height: 100vh; transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Fallback Screen */
+        #hgt-fallback {
+            position: fixed; inset: 0; background: var(--bg-base); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
+        .fallback-btn { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; margin-top: 16px; cursor: pointer; }
+
+        /* Main App Root */
+        #hgt-app-root {
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: all 0.5s ease; padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        /* Header Layout */
+        header {
+            background: var(--bg-surface); padding: 20px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
+        }
+        .header-titles h1 { margin: 0; font-size: 20px; font-weight: 800; color: var(--accent); }
+        .header-titles p { margin: 2px 0 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        
+        .theme-toggle {
+            background: var(--bg-base); border: 1px solid var(--border); color: var(--text-main);
+            padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;
+        }
+
+        /* Content Area */
+        .container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-size: 24px; margin-top: 0; margin-bottom: 12px; }
+        p { font-size: 15px; line-height: 1.6; color: var(--text-muted); margin-bottom: 24px; }
+
+        .get-started-btn {
+            background: var(--accent); color: white; border: none; padding: 16px 32px;
+            font-size: 16px; font-weight: bold; border-radius: 12px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: transform 0.1s;
+        }
+        .get-started-btn:active { transform: scale(0.96); }
+
+        /* Code Block & Copy Button */
+        .code-wrapper {
+            background: var(--bg-surface); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden; margin-bottom: 24px; position: relative;
+        }
+        .code-header {
+            background: rgba(0,0,0,0.05); padding: 10px 16px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .code-title { font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; }
+        .copy-btn {
+            background: var(--accent); color: white; border: none; padding: 6px 12px;
+            border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: background 0.2s;
+        }
+        .copy-btn:hover { background: #2563eb; }
+        pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 14px; font-family: monospace; color: var(--text-main); }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); z-index: 1000;
+        }
+        .nav-item {
+            background: transparent; border: none; color: var(--text-muted);
+            font-size: 14px; font-weight: 600; display: flex; flex-direction: column;
+            align-items: center; gap: 4px; cursor: pointer; transition: color 0.2s; width: 25%;
+        }
+        .nav-item.active { color: var(--accent); }
+        .nav-icon { font-size: 20px; }
+    </style>
 </head>
 <body>
 
-    <div id="hgt-loading-fallback">
-        <div class="fallback-card">
-            <h3 id="fallback-status" style="margin-top:0;">Authenticating HGT Core System...</h3>
-            <p style="font-size:13px; margin:0;">Solving cognitive gate algorithms. If the screen remains blank, your browser is loading old cached configurations.</p>
-            <button class="fallback-btn" id="bypass-lock-btn" style="display:none;" onclick="forceBypassSecurity()">Bypass Guard & View Codes</button>
-        </div>
+    <div id="hgt-fallback">
+        <h3 id="fallback-status">Verifying Environment...</h3>
+        <button class="fallback-btn" id="bypass-btn" style="display:none;" onclick="forceBypass()">View Documentation</button>
     </div>
 
-    <div id="hgt-secure-console">
+    <div id="hgt-app-root">
+        
         <header>
-            <div class="brand-meta">
-                <h1>HGT Guardian DevHub Pro</h1>
-                <p>Identity Protection & Human Attestation Management Terminal</p>
+            <div class="header-titles">
+                <p>Powered by HGT</p>
+                <h1>Guardian Protocol</h1>
+                <p style="color: var(--text-main); font-weight: 400; opacity: 0.8; text-transform: none;">This is a security layer for website.</p>
             </div>
-            <div class="badge-live">
-                <div class="badge-pulse"></div>
-                <span>CONSOLE PROTECTED // LIVE MODE</span>
-            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
         </header>
 
-        <div class="layout-grid">
-            <aside class="sidebar-menu">
-                <button class="menu-btn active" id="btn-overview" onclick="navigateConsole('overview')">Platform Overview</button>
-                <button class="menu-btn" id="btn-web" onclick="navigateConsole('web')">Web Integration</button>
-                <button class="menu-btn" id="btn-android" onclick="navigateConsole('android')">Android OS SDK</button>
-                <button class="menu-btn" id="btn-ios" onclick="navigateConsole('ios')">iOS Swift Wrapper</button>
-                <button class="menu-btn" id="btn-endpoints" onclick="navigateConsole('endpoints')">API Distribution</button>
-            </aside>
+        <div class="container">
+            
+            <section id="view-home" class="view-section active">
+                <h2>Welcome to HGT Guardian</h2>
+                <p>Ensure maximum threat mitigation before users interact with your sensitive endpoints. The HGT Guardian acts as a permanent, timer-less cognitive and biometric gate.</p>
+                <p><strong>Perfect for Forms:</strong> You can trigger this verification layer immediately when a user attempts to access a <b>Sign Up form</b> or a <b>Login form</b>, preventing automated credential stuffing, bots, and brute-force attacks.</p>
+                <button class="get-started-btn" onclick="switchTab('web')">Get Started &rarr;</button>
+            </section>
 
-            <main class="content-panel">
+            <section id="view-web" class="view-section">
+                <h2>Web / HTML Integration</h2>
+                <p>To protect your login, signup, or main website, paste this initialization code inside the <code>&lt;head&gt;</code> tag of your HTML document. The script will intercept the page load until the user verifies their identity.</p>
                 
-                <section id="pane-overview" class="doc-section active">
-                    <h2>Leading By Example Integration</h2>
-                    <p>The HGT Guardian console enforces your system requirements out of the box. By embedding the core client payload configuration script inside the head layout of this document, unauthorized automated scrapers, runtime injection nodes, and malicious bots are filtered out long before layout compilation finishes.</p>
-                    <button class="action-btn" onclick="navigateConsole('web')">
-                        <span>Get Started with Integration</span>
-                        <strong>&rarr;</strong>
-                    </button>
-                </section>
-
-                <section id="pane-web" class="doc-section">
-                    <h2>Web Deployment Module Configuration</h2>
-                    <p>To hook your enterprise production interface into the threat mitigation loop, include this programmatic execution script setup within the boundaries of your web asset header layer (<code>&lt;head&gt;</code>):</p>
-                    <div class="code-container">
-                        <div class="code-label">HTML5 Script Hook</div>
-<pre><code>&lt;!-- HGT Guardian Platform Injection Core --&gt;
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span class="code-title">index.html (Head)</span>
+                        <button class="copy-btn" onclick="copyCode(this, 'code-web')">Copy Code</button>
+                    </div>
+                    <pre><code id="code-web">&lt;!-- HGT Guardian Platform Injection Core --&gt;
 &lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-    HGT_Guardian.init({
-        brand: 'Henry Global Tech Industry',
-        mode: 'full', 
-        autoGuard: true,
-        onSuccess: function() {
-            console.log("Handshake confirmed.");
-            window.location.href = "/secure-landing-portal";
-        }
+    window.addEventListener('DOMContentLoaded', function() {
+        HGT_Guardian.init({
+            brand: 'Your App Name',
+            mode: 'full', 
+            autoGuard: true,
+            onSuccess: function() {
+                // Unlocks the login/signup form or redirects
+                console.log("User verified.");
+                document.getElementById('login-form').style.display = 'block';
+            }
+        });
     });
 &lt;/script&gt;</code></pre>
-                    </div>
-                </section>
+                </div>
+            </section>
 
-                <section id="pane-android" class="doc-section">
-                    <h2>Android Native Hybrid App Integration</h2>
-                    <p>For application distributions wrapping this client pipeline inside a secure native Kotlin container infrastructure, bind your native <code>WebView</code> interface runtime directly to the script dispatch interface layer:</p>
-                    <div class="code-container">
-                        <div class="code-label">Kotlin Framework Link</div>
-<pre><code>import android.webkit.JavascriptInterface
+            <section id="view-android" class="view-section">
+                <h2>Android App Integration</h2>
+                <p>When loading your HTML forms inside a Kotlin <code>WebView</code>, you must intercept the authentication status using a Javascript Interface. This allows the web security layer to talk directly to your Android Native OS.</p>
+                
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span class="code-title">MainActivity.kt</span>
+                        <button class="copy-btn" onclick="copyCode(this, 'code-android')">Copy Code</button>
+                    </div>
+                    <pre><code id="code-android">import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import org.json.JSONObject
 
@@ -203,67 +205,113 @@ class HGTGuardianRuntimeBridge(private val webView: WebView) {
         val status = payload.optString("status") 
         
         if (status == "VERIFIED") {
-            // Success condition triggered
+            // User passed the Guardian Check
+            // Load native sign-up screen
         } else if (status == "DECLINED") {
-            // Lockdown condition reached
+            // Lock out user
         }
     }
-}</code></pre>
-                    </div>
-                </section>
+}
+// Attach via: webView.addJavascriptInterface(HGTGuardianRuntimeBridge(webView), "AndroidBridge")</code></pre>
+                </div>
+            </section>
 
-                <section id="pane-ios" class="doc-section">
-                    <h2>iOS WebKit Script Message Interceptors</h2>
-                    <p>When loading your web console inside native iOS apps using the Swift programming paradigm, listen for validation hooks by monitoring programmatic structural returns from the <code>WKScriptMessageHandler</code> channel:</p>
-                    <div class="code-container">
-                        <div class="code-label">Swift WKWebKit Hook</div>
-<pre><code>import WebKit
+            <section id="view-ios" class="view-section">
+                <h2>iOS Swift Integration</h2>
+                <p>For iOS apps using <code>WKWebView</code>, utilize the WebKit Script Message Handler to listen for the validation events dispatched by the HGT Guardian engine.</p>
+                
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span class="code-title">ViewController.swift</span>
+                        <button class="copy-btn" onclick="copyCode(this, 'code-ios')">Copy Code</button>
+                    </div>
+                    <pre><code id="code-ios">import WebKit
 import UIKit
 
-class SecurityViewportController: UIViewController, WKScriptMessageHandler {
+class SecurityViewController: UIViewController, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "iOSBridge", 
            let dictionary = message.body as? [String: Any],
            let status = dictionary["status"] as? String {
+            
             if status == "VERIFIED" {
-                // Biometrics valid
+                // Biometrics and math checks passed
+                // Proceed to native login form
             } else if status == "DECLINED" {
-                // Access declined
+                // Reject access
             }
         }
     }
 }</code></pre>
-                    </div>
-                </section>
+                </div>
+            </section>
 
-                <section id="pane-endpoints" class="doc-section">
-                    <h2>Core CDN Script Processing Endpoints</h2>
-                    <p>The developer portal processes raw engine configuration logic files via your hosted global distribution content pipelines. Use these links directly inside development or sandbox environments:</p>
-                    
-                    <div class="api-card">
-                        <span class="method-tag">CDN URL</span>
-                        <span class="url-text">https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js</span>
-                    </div>
-
-                    <div class="api-card">
-                        <span class="method-tag">RAW SRC</span>
-                        <span class="url-text">https://raw.githubusercontent.com/henrykamsi/hgt-guardian/main/hgt-guardian.js</span>
-                    </div>
-                </section>
-
-            </main>
         </div>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+                <span class="nav-icon">🏠</span>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" id="nav-web" onclick="switchTab('web')">
+                <span class="nav-icon">🌐</span>
+                <span>Web</span>
+            </button>
+            <button class="nav-item" id="nav-android" onclick="switchTab('android')">
+                <span class="nav-icon">🤖</span>
+                <span>Android</span>
+            </button>
+            <button class="nav-item" id="nav-ios" onclick="switchTab('ios')">
+                <span class="nav-icon">🍏</span>
+                <span>iOS</span>
+            </button>
+        </nav>
+
     </div>
 
     <script>
-        function navigateConsole(targetSectionId) {
-            document.querySelectorAll('.doc-section').forEach(section => section.classList.remove('active'));
-            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+        // 1. Theme Toggling Logic
+        function toggleTheme() {
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', newTheme);
+        }
+
+        // 2. Bottom Navigation Tab Switching
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             
-            document.getElementById('pane-' + targetSectionId).classList.add('active');
-            document.getElementById('btn-' + targetSectionId).classList.add('active');
+            // Show requested section
+            document.getElementById('view-' + tabId).classList.add('active');
+            
+            // Highlight active nav icon (handles if 'Get Started' triggers web tab)
+            const targetNav = document.getElementById('nav-' + tabId);
+            if (targetNav) targetNav.classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 3. Copy Code Functionality
+        function copyCode(btnElement, codeId) {
+            const codeText = document.getElementById(codeId).innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalText = btnElement.innerText;
+                btnElement.innerText = "Copied!";
+                btnElement.style.background = "var(--accent-success, #10b981)";
+                
+                // Revert button text after 2 seconds
+                setTimeout(() => {
+                    btnElement.innerText = originalText;
+                    btnElement.style.background = "var(--accent)";
+                }, 2000);
+            }).catch(err => {
+                console.error("Failed to copy code: ", err);
+            });
         }
     </script>
 </body>
 </html>
-

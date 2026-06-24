@@ -163,7 +163,7 @@ const HGT_Guardian = (function () {
         cardBody.innerHTML = `
             <div class="hgt-banner-note">
                 <div class="hgt-banner-title">System Verification Check</div>
-                <div class="hgt-banner-body">The website has not crashed. It will respond once you answer the question. Thank you for your patience.</div>
+                <div class="hgt-banner-body">The website has not crashed. It will respond once you answer the question. Thank you for your patience.Tap the botton three times faster to proceed.</div>
             </div>
             <h2 class="hgt-main-heading">Henry Global Tech Industry</h2>
             <div class="hgt-brand-sub">Powered by HGT Guidance</div>

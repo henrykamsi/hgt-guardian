@@ -3,315 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HGT Guardian Developer Docs</title>
+    <title>HGT Guidance | Developer SDK</title>
 
     <script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
             if (typeof HGT_Guardian !== 'undefined') {
                 HGT_Guardian.init({
-                    brand: 'Henry Global Tech Industry',
+                    brand: 'HGT Guidance',
                     mode: 'full',
                     autoGuard: true,
                     onSuccess: function() {
-                        document.getElementById('hgt-fallback').style.display = 'none';
-                        const app = document.getElementById('hgt-app-root');
-                        app.style.display = 'block';
-                        setTimeout(() => {
-                            app.style.opacity = "1";
-                            app.style.transform = "translateY(0)";
-                        }, 50);
+                        // Hide loading, show the Welcome "Get Started" screen
+                        document.getElementById('hgt-loading').style.display = 'none';
+                        document.getElementById('hgt-welcome-screen').style.display = 'flex';
                     }
                 });
             } else {
-                document.getElementById('fallback-status').innerText = "Security Engine CDN Offline";
-                document.getElementById('bypass-btn').style.display = 'block';
+                document.getElementById('fallback-text').innerText = "Security Engine Offline - Please refresh.";
             }
         });
 
-        function forceBypass() {
-            document.getElementById('hgt-fallback').style.display = 'none';
-            const app = document.getElementById('hgt-app-root');
+        function enterApp() {
+            document.getElementById('hgt-welcome-screen').style.display = 'none';
+            const app = document.getElementById('hgt-main-app');
             app.style.display = 'block';
-            app.style.opacity = "1";
-            app.style.transform = "translateY(0)";
+            setTimeout(() => { app.style.opacity = "1"; app.style.transform = "translateY(0)"; }, 50);
         }
     </script>
 
     <style>
-        /* Light & Dark Mode Variables */
+        /* Modern CSS Variables & Theme Handling */
         :root[data-theme="dark"] {
             --bg-base: #0f172a; --bg-surface: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8;
-            --accent: #3b82f6; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.9);
+            --accent: #3b82f6; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.95);
+            --success: #10b981;
         }
         :root[data-theme="light"] {
             --bg-base: #f1f5f9; --bg-surface: #ffffff; --text-main: #0f172a; --text-muted: #475569;
-            --accent: #2563eb; --border: #cbd5e1; --nav-bg: rgba(255, 255, 255, 0.9);
+            --accent: #2563eb; --border: #cbd5e1; --nav-bg: rgba(255, 255, 255, 0.95);
+            --success: #059669;
         }
 
         body {
             background-color: var(--bg-base); color: var(--text-main);
             font-family: system-ui, -apple-system, sans-serif;
-            margin: 0; padding: 0; min-height: 100vh; transition: background-color 0.3s, color 0.3s;
+            margin: 0; padding: 0; min-height: 100vh; transition: all 0.3s ease;
         }
 
-        /* Fallback Screen */
-        #hgt-fallback {
-            position: fixed; inset: 0; background: var(--bg-base); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-        }
-        .fallback-btn { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; margin-top: 16px; cursor: pointer; }
-
-        /* Main App Root */
-        #hgt-app-root {
-            display: none; opacity: 0; transform: translateY(20px);
-            transition: all 0.5s ease; padding-bottom: 80px; /* Space for bottom nav */
-        }
-
-        /* Header Layout */
-        header {
-            background: var(--bg-surface); padding: 20px; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
-        }
-        .header-titles h1 { margin: 0; font-size: 20px; font-weight: 800; color: var(--accent); }
-        .header-titles p { margin: 2px 0 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        /* Lead by Example States */
+        #hgt-loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; background: var(--bg-base); }
         
-        .theme-toggle {
-            background: var(--bg-base); border: 1px solid var(--border); color: var(--text-main);
-            padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;
+        #hgt-welcome-screen {
+            position: fixed; inset: 0; background: var(--bg-base); z-index: 9998;
+            display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
         }
+        .welcome-title { font-size: 36px; font-weight: 800; color: var(--accent); margin-bottom: 10px; }
+        .welcome-subtitle { font-size: 16px; color: var(--text-muted); max-width: 400px; margin-bottom: 40px; line-height: 1.5; }
+        .btn-get-started {
+            background: var(--accent); color: white; border: none; padding: 18px 40px;
+            font-size: 18px; font-weight: bold; border-radius: 12px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: transform 0.2s;
+        }
+        .btn-get-started:active { transform: scale(0.95); }
 
-        /* Content Area */
-        .container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
-        .view-section.active { display: block; }
+        /* App UI */
+        #hgt-main-app { display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; padding-bottom: 100px; }
+        
+        header { padding: 20px; border-bottom: 1px solid var(--border); background: var(--bg-surface); display: flex; justify-content: space-between; align-items: center; }
+        .header-brand h1 { margin: 0; font-size: 20px; color: var(--accent); }
+        .attribution { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-style: italic; }
+        .theme-btn { background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { font-size: 24px; margin-top: 0; margin-bottom: 12px; }
-        p { font-size: 15px; line-height: 1.6; color: var(--text-muted); margin-bottom: 24px; }
+        h2 { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 30px; }
+        p { line-height: 1.6; color: var(--text-muted); }
 
-        .get-started-btn {
-            background: var(--accent); color: white; border: none; padding: 16px 32px;
-            font-size: 16px; font-weight: bold; border-radius: 12px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: transform 0.1s;
-        }
-        .get-started-btn:active { transform: scale(0.96); }
+        /* Code Blocks */
+        .code-box { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 30px; overflow: hidden; }
+        .code-header { background: rgba(0,0,0,0.05); padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .code-title { font-weight: bold; font-size: 14px; color: var(--accent); }
+        .copy-btn { background: var(--accent); color: white; border: none; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+        pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 13px; color: var(--text-main); font-family: monospace; }
 
-        /* Code Block & Copy Button */
-        .code-wrapper {
-            background: var(--bg-surface); border: 1px solid var(--border);
-            border-radius: 12px; overflow: hidden; margin-bottom: 24px; position: relative;
-        }
-        .code-header {
-            background: rgba(0,0,0,0.05); padding: 10px 16px; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .code-title { font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; }
-        .copy-btn {
-            background: var(--accent); color: white; border: none; padding: 6px 12px;
-            border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: background 0.2s;
-        }
-        .copy-btn:hover { background: #2563eb; }
-        pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 14px; font-family: monospace; color: var(--text-main); }
-
-        /* Bottom Navigation Bar */
+        /* Footer & Nav */
+        footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 14px; font-weight: bold; }
+        
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
-            padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); z-index: 1000;
+            position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0 calc(15px + env(safe-area-inset-bottom));
         }
-        .nav-item {
-            background: transparent; border: none; color: var(--text-muted);
-            font-size: 14px; font-weight: 600; display: flex; flex-direction: column;
-            align-items: center; gap: 4px; cursor: pointer; transition: color 0.2s; width: 25%;
-        }
+        .nav-item { background: none; border: none; color: var(--text-muted); font-size: 14px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; width: 33%; }
         .nav-item.active { color: var(--accent); }
-        .nav-icon { font-size: 20px; }
+        .nav-icon { font-size: 22px; font-weight: normal; }
     </style>
 </head>
 <body>
 
-    <div id="hgt-fallback">
-        <h3 id="fallback-status">Verifying Environment...</h3>
-        <button class="fallback-btn" id="bypass-btn" style="display:none;" onclick="forceBypass()">View Documentation</button>
+    <div id="hgt-loading">
+        <h3 id="fallback-text">Verifying secure connection...</h3>
     </div>
 
-    <div id="hgt-app-root">
-        
+    <div id="hgt-welcome-screen">
+        <h1 class="welcome-title">HGT Guidance</h1>
+        <p class="welcome-subtitle">Powered by HGT. This helps ensure the security layer of all websites.</p>
+        <button class="btn-get-started" onclick="enterApp()">Get Started</button>
+    </div>
+
+    <div id="hgt-main-app">
         <header>
-            <div class="header-titles">
-                <p>Powered by HGT</p>
-                <h1>Guardian Protocol</h1>
-                <p style="color: var(--text-main); font-weight: 400; opacity: 0.8; text-transform: none;">This is a security layer for website.</p>
+            <div class="header-brand">
+                <h1>HGT Security SDK</h1>
+                <div class="attribution">Built by Henry Global Tech Industry with a sum of $10,000 for management.</div>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+            <button class="theme-btn" onclick="toggleTheme()">🌓</button>
         </header>
 
         <div class="container">
-            
-            <section id="view-home" class="view-section active">
-                <h2>Welcome to HGT Guardian</h2>
-                <p>Ensure maximum threat mitigation before users interact with your sensitive endpoints. The HGT Guardian acts as a permanent, timer-less cognitive and biometric gate.</p>
-                <p><strong>Perfect for Forms:</strong> You can trigger this verification layer immediately when a user attempts to access a <b>Sign Up form</b> or a <b>Login form</b>, preventing automated credential stuffing, bots, and brute-force attacks.</p>
-                <button class="get-started-btn" onclick="switchTab('web')">Get Started &rarr;</button>
-            </section>
+            <div id="tab-web" class="tab-content active">
+                <h1>Web Integration</h1>
+                <p>Implement the HGT Guardian on your HTML/JS websites to stop bots before they load your content.</p>
 
-            <section id="view-web" class="view-section">
-                <h2>Web / HTML Integration</h2>
-                <p>To protect your login, signup, or main website, paste this initialization code inside the <code>&lt;head&gt;</code> tag of your HTML document. The script will intercept the page load until the user verifies their identity.</p>
-                
-                <div class="code-wrapper">
-                    <div class="code-header">
-                        <span class="code-title">index.html (Head)</span>
-                        <button class="copy-btn" onclick="copyCode(this, 'code-web')">Copy Code</button>
-                    </div>
-                    <pre><code id="code-web">&lt;!-- HGT Guardian Platform Injection Core --&gt;
+                <h2>1. First Redirect (Gatekeeper)</h2>
+                <p>This code ensures that when users click your website link, they must verify they are human before any content is sent. Place this inside your <code>&lt;head&gt;</code>.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">index.html (Head)</span><button class="copy-btn" onclick="copyCode(this, 'c-web-1')">Copy Code</button></div>
+                    <pre><code id="c-web-1">&lt;style&gt; body { display: none; } /* Hides site until verified */ &lt;/style&gt;
 &lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-    window.addEventListener('DOMContentLoaded', function() {
-        HGT_Guardian.init({
-            brand: 'Your App Name',
-            mode: 'full', 
-            autoGuard: true,
-            onSuccess: function() {
-                // Unlocks the login/signup form or redirects
-                console.log("User verified.");
-                document.getElementById('login-form').style.display = 'block';
-            }
-        });
+    HGT_Guardian.init({
+        brand: 'Your App',
+        mode: 'full',
+        onSuccess: function() { document.body.style.display = 'block'; }
     });
 &lt;/script&gt;</code></pre>
                 </div>
-            </section>
 
-            <section id="view-android" class="view-section">
-                <h2>Android App Integration</h2>
-                <p>When loading your HTML forms inside a Kotlin <code>WebView</code>, you must intercept the authentication status using a Javascript Interface. This allows the web security layer to talk directly to your Android Native OS.</p>
-                
-                <div class="code-wrapper">
-                    <div class="code-header">
-                        <span class="code-title">MainActivity.kt</span>
-                        <button class="copy-btn" onclick="copyCode(this, 'code-android')">Copy Code</button>
-                    </div>
-                    <pre><code id="code-android">import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import org.json.JSONObject
+                <h2>2. Login Verification</h2>
+                <p>This code protects your login form. The form is invisible until the user passes the security check.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">login.html</span><button class="copy-btn" onclick="copyCode(this, 'c-web-2')">Copy Code</button></div>
+                    <pre><code id="c-web-2">&lt;div id="hgt-login" style="display:none;"&gt;
+    &lt;form&gt;
+        &lt;input type="email" placeholder="Email"&gt;
+        &lt;input type="password" placeholder="Password"&gt;
+        &lt;button type="submit"&gt;Login&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+&lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    HGT_Guardian.init({ onSuccess: () => document.getElementById('hgt-login').style.display = 'block' });
+&lt;/script&gt;</code></pre>
+                </div>
 
-class HGTGuardianRuntimeBridge(private val webView: WebView) {
+                <h2>3. Sign Up Verification</h2>
+                <p>Use this block to secure account creation. It requires Name, Surname, Email, Password, and Confirmation.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">signup.html</span><button class="copy-btn" onclick="copyCode(this, 'c-web-3')">Copy Code</button></div>
+                    <pre><code id="c-web-3">&lt;div id="hgt-signup" style="display:none;"&gt;
+    &lt;form&gt;
+        &lt;input type="text" placeholder="Name"&gt;&lt;input type="text" placeholder="Surname"&gt;
+        &lt;input type="email" placeholder="Email"&gt;
+        &lt;input type="password" placeholder="Password"&gt;&lt;input type="password" placeholder="Confirm Password"&gt;
+        &lt;button type="submit"&gt;Sign Up&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+&lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    HGT_Guardian.init({ onSuccess: () => document.getElementById('hgt-signup').style.display = 'block' });
+&lt;/script&gt;</code></pre>
+                </div>
+
+                <h2>4. Master Code (Combination)</h2>
+                <p>This master code handles the first redirect, login, and signup simultaneously on a single page architecture.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">master-app.html</span><button class="copy-btn" onclick="copyCode(this, 'c-web-4')">Copy Code</button></div>
+                    <pre><code id="c-web-4">&lt;style&gt; .protected-view { display: none; } &lt;/style&gt;
+&lt;!-- Forms --&gt;
+&lt;div id="main-content" class="protected-view"&gt;Welcome to the App!&lt;/div&gt;
+&lt;div id="login-view" class="protected-view"&gt;&lt;input type="email"&gt;&lt;button&gt;Login&lt;/button&gt;&lt;/div&gt;
+&lt;div id="signup-view" class="protected-view"&gt;&lt;input type="text"&gt;&lt;button&gt;Sign Up&lt;/button&gt;&lt;/div&gt;
+
+&lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    // Unlocks all views upon single verification
+    HGT_Guardian.init({
+        onSuccess: function() {
+            document.querySelectorAll('.protected-view').forEach(el => el.style.display = 'block');
+        }
+    });
+&lt;/script&gt;</code></pre>
+                </div>
+            </div>
+
+            <div id="tab-android" class="tab-content">
+                <h1>Android OS Integration</h1>
+                <p>Use these Kotlin/Java bridges to trigger the native Android UI after the web-based security layer is passed.</p>
+
+                <h2>1. First Redirect (Gatekeeper)</h2>
+                <p>Intercepts the first app launch, holding the native UI until the WebView sends the VERIFIED signal.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">MainActivity.kt / .java</span><button class="copy-btn" onclick="copyCode(this, 'c-and-1')">Copy Code</button></div>
+                    <pre><code id="c-and-1">// KOTLIN
+webView.settings.javaScriptEnabled = true
+webView.addJavascriptInterface(HGTBridge(this), "HGTBridge")
+
+class HGTBridge(val context: Context) {
     @JavascriptInterface
-    fun postMessage(message: String) {
-        val payload = JSONObject(message)
-        val status = payload.optString("status") 
-        
+    fun postMessage(status: String) {
+        if (status == "VERIFIED") { /* Remove Loading Screen, Show Home */ }
+    }
+}
+
+// JAVA
+webView.getSettings().setJavaScriptEnabled(true);
+webView.addJavascriptInterface(new HGTBridge(this), "HGTBridge");
+
+public class HGTBridge {
+    Context mContext;
+    HGTBridge(Context c) { mContext = c; }
+    @JavascriptInterface
+    public void postMessage(String status) {
+        if (status.equals("VERIFIED")) { /* Remove Loading Screen, Show Home */ }
+    }
+}</code></pre>
+                </div>
+
+                <h2>2. Login Verification</h2>
+                <p>Protects the native Android Login Activity.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">LoginActivity.kt</span><button class="copy-btn" onclick="copyCode(this, 'c-and-2')">Copy Code</button></div>
+                    <pre><code id="c-and-2">// KOTLIN
+@JavascriptInterface
+fun postMessage(status: String) {
+    if (status == "VERIFIED") {
+        runOnUiThread {
+            findViewById&lt;LinearLayout&gt;(R.id.loginFormLayout).visibility = View.VISIBLE
+        }
+    }
+}</code></pre>
+                </div>
+
+                <h2>3. Sign Up Verification</h2>
+                <p>Protects the native Android Sign Up Activity.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">SignupActivity.kt</span><button class="copy-btn" onclick="copyCode(this, 'c-and-3')">Copy Code</button></div>
+                    <pre><code id="c-and-3">// KOTLIN
+@JavascriptInterface
+fun postMessage(status: String) {
+    if (status == "VERIFIED") {
+        runOnUiThread {
+            // Unlocks Name, Surname, Email, Pass, Confirm Pass Native Inputs
+            findViewById&lt;LinearLayout&gt;(R.id.signupFormLayout).visibility = View.VISIBLE
+        }
+    }
+}</code></pre>
+                </div>
+
+                <h2>4. Master Code (Combination)</h2>
+                <p>A global Application-level bridge that handles routing for Gatekeeper, Login, and Signup dynamically.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">GlobalHGTBridge.kt</span><button class="copy-btn" onclick="copyCode(this, 'c-and-4')">Copy Code</button></div>
+                    <pre><code id="c-and-4">class GlobalHGTBridge(private val activity: Activity, private val viewType: String) {
+    @JavascriptInterface
+    fun postMessage(status: String) {
         if (status == "VERIFIED") {
-            // User passed the Guardian Check
-            // Load native sign-up screen
-        } else if (status == "DECLINED") {
-            // Lock out user
+            activity.runOnUiThread {
+                when(viewType) {
+                    "GATEKEEPER" -> showMainAppUI()
+                    "LOGIN" -> showLoginUI()
+                    "SIGNUP" -> showSignupUI()
+                }
+            }
         }
     }
 }
-// Attach via: webView.addJavascriptInterface(HGTGuardianRuntimeBridge(webView), "AndroidBridge")</code></pre>
+// Usage: webView.addJavascriptInterface(GlobalHGTBridge(this, "SIGNUP"), "HGTBridge")</code></pre>
                 </div>
-            </section>
+            </div>
 
-            <section id="view-ios" class="view-section">
-                <h2>iOS Swift Integration</h2>
-                <p>For iOS apps using <code>WKWebView</code>, utilize the WebKit Script Message Handler to listen for the validation events dispatched by the HGT Guardian engine.</p>
-                
-                <div class="code-wrapper">
-                    <div class="code-header">
-                        <span class="code-title">ViewController.swift</span>
-                        <button class="copy-btn" onclick="copyCode(this, 'code-ios')">Copy Code</button>
-                    </div>
-                    <pre><code id="code-ios">import WebKit
-import UIKit
+            <div id="tab-ios" class="tab-content">
+                <h1>iOS Swift Integration</h1>
+                <p>Utilize WebKit Handlers to manage the Apple iOS native UI based on HGT Guardian signals.</p>
 
-class SecurityViewController: UIViewController, WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == "iOSBridge", 
-           let dictionary = message.body as? [String: Any],
-           let status = dictionary["status"] as? String {
-            
-            if status == "VERIFIED" {
-                // Biometrics and math checks passed
-                // Proceed to native login form
-            } else if status == "DECLINED" {
-                // Reject access
+                <h2>1. First Redirect (Gatekeeper)</h2>
+                <p>Blocks the initial View Controller progression until verification is completed.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">SceneDelegate.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-1')">Copy Code</button></div>
+                    <pre><code id="c-ios-1">func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    if message.name == "HGTBridge", let status = message.body as? String {
+        if status == "VERIFIED" {
+            // Transition from Launch Screen to Main Tab Bar Controller
+            self.transitionToMainApp()
+        }
+    }
+}</code></pre>
+                </div>
+
+                <h2>2. Login Verification</h2>
+                <p>Unlocks the native SwiftUI / UIKit Login TextFields.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">LoginViewController.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-2')">Copy Code</button></div>
+                    <pre><code id="c-ios-2">func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    if message.name == "HGTBridge", let status = message.body as? String {
+        if status == "VERIFIED" {
+            DispatchQueue.main.async {
+                self.emailTextField.isHidden = false
+                self.passwordTextField.isHidden = false
+                self.loginButton.isHidden = false
             }
         }
     }
 }</code></pre>
                 </div>
-            </section>
+
+                <h2>3. Sign Up Verification</h2>
+                <p>Unlocks the native Sign Up TextFields (Name, Surname, Email, Password).</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">SignupViewController.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-3')">Copy Code</button></div>
+                    <pre><code id="c-ios-3">func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    if message.name == "HGTBridge", let status = message.body as? String {
+        if status == "VERIFIED" {
+            DispatchQueue.main.async {
+                self.signupFormStackView.isHidden = false
+            }
+        }
+    }
+}</code></pre>
+                </div>
+
+                <h2>4. Master Code (Combination)</h2>
+                <p>A unified Handler extension that processes all HGT signals app-wide.</p>
+                <div class="code-box">
+                    <div class="code-header"><span class="code-title">HGTManager.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-4')">Copy Code</button></div>
+                    <pre><code id="c-ios-4">extension UIViewController: WKScriptMessageHandler {
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard message.name == "HGTBridge", let status = message.body as? String, status == "VERIFIED" else { return }
+        
+        DispatchQueue.main.async {
+            if self is LoginViewController { (self as! LoginViewController).unlockForm() }
+            else if self is SignupViewController { (self as! SignupViewController).unlockForm() }
+            else { self.dismiss(animated: true) } // Default Gatekeeper unlock
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
 
         </div>
 
+        <footer>
+            Powered by HGT, Henry Global Tech Industry
+        </footer>
+
         <nav class="bottom-nav">
-            <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
-                <span class="nav-icon">🏠</span>
-                <span>Home</span>
-            </button>
-            <button class="nav-item" id="nav-web" onclick="switchTab('web')">
-                <span class="nav-icon">🌐</span>
+            <button class="nav-item active" id="btn-web" onclick="switchTab('web')">
+                <span class="nav-icon">&lt;/&gt;</span>
                 <span>Web</span>
             </button>
-            <button class="nav-item" id="nav-android" onclick="switchTab('android')">
+            <button class="nav-item" id="btn-android" onclick="switchTab('android')">
                 <span class="nav-icon">🤖</span>
                 <span>Android</span>
             </button>
-            <button class="nav-item" id="nav-ios" onclick="switchTab('ios')">
-                <span class="nav-icon">🍏</span>
+            <button class="nav-item" id="btn-ios" onclick="switchTab('ios')">
+                <span class="nav-icon">iOS</span>
                 <span>iOS</span>
             </button>
         </nav>
-
     </div>
 
     <script>
-        // 1. Theme Toggling Logic
-        function toggleTheme() {
-            const root = document.documentElement;
-            const currentTheme = root.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            root.setAttribute('data-theme', newTheme);
+        // Copy Code Functionality
+        function copyCode(btn, targetId) {
+            const text = document.getElementById(targetId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "Copied!";
+                btn.style.backgroundColor = "var(--success)";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = "var(--accent)";
+                }, 2000);
+            });
         }
 
-        // 2. Bottom Navigation Tab Switching
-        function switchTab(tabId) {
-            // Hide all sections
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        // Tab Switching Logic
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
-            // Show requested section
-            document.getElementById('view-' + tabId).classList.add('active');
-            
-            // Highlight active nav icon (handles if 'Get Started' triggers web tab)
-            const targetNav = document.getElementById('nav-' + tabId);
-            if (targetNav) targetNav.classList.add('active');
-            
-            // Scroll to top
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('btn-' + tab).classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 3. Copy Code Functionality
-        function copyCode(btnElement, codeId) {
-            const codeText = document.getElementById(codeId).innerText;
-            navigator.clipboard.writeText(codeText).then(() => {
-                const originalText = btnElement.innerText;
-                btnElement.innerText = "Copied!";
-                btnElement.style.background = "var(--accent-success, #10b981)";
-                
-                // Revert button text after 2 seconds
-                setTimeout(() => {
-                    btnElement.innerText = originalText;
-                    btnElement.style.background = "var(--accent)";
-                }, 2000);
-            }).catch(err => {
-                console.error("Failed to copy code: ", err);
-            });
+        // Theme Toggle Logic
+        function toggleTheme() {
+            const root = document.documentElement;
+            const isDark = root.getAttribute('data-theme') === 'dark';
+            root.setAttribute('data-theme', isDark ? 'light' : 'dark');
         }
     </script>
 </body>
 </html>
+

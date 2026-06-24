@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+    <meta name="google-site-verification" content="ZxvYybyg9963-ltKszRxcviAPkYag5UuGqjlJLMqtww" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HGT Guidance | Developer SDK</title>
 
+    <!-- 1. LEAD BY EXAMPLE: HGT Security Engine Injection -->
     <script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
@@ -88,7 +90,7 @@
         .code-header { background: rgba(0,0,0,0.05); padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .code-title { font-weight: bold; font-size: 14px; color: var(--accent); }
         .copy-btn { background: var(--accent); color: white; border: none; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
-        pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 13px; color: var(--text-main); font-family: monospace; }
+        pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 13px; color: var(--text-main); font-family: monospace; white-space: pre-wrap; }
 
         /* Footer & Nav */
         footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 14px; font-weight: bold; }
@@ -104,16 +106,19 @@
 </head>
 <body>
 
+    <!-- 1. Lead by Example Loading State -->
     <div id="hgt-loading">
         <h3 id="fallback-text">Verifying secure connection...</h3>
     </div>
 
+    <!-- 2. The Welcome Gate -->
     <div id="hgt-welcome-screen">
         <h1 class="welcome-title">HGT Guidance</h1>
         <p class="welcome-subtitle">Powered by HGT. This helps ensure the security layer of all websites.</p>
         <button class="btn-get-started" onclick="enterApp()">Get Started</button>
     </div>
 
+    <!-- 3. The Developer SDK Dashboard -->
     <div id="hgt-main-app">
         <header>
             <div class="header-brand">
@@ -124,10 +129,12 @@
         </header>
 
         <div class="container">
+            <!-- ================= WEB SECTION ================= -->
             <div id="tab-web" class="tab-content active">
                 <h1>Web Integration</h1>
                 <p>Implement the HGT Guardian on your HTML/JS websites to stop bots before they load your content.</p>
 
+                <!-- Web Code 1 -->
                 <h2>1. First Redirect (Gatekeeper)</h2>
                 <p>This code ensures that when users click your website link, they must verify they are human before any content is sent. Place this inside your <code>&lt;head&gt;</code>.</p>
                 <div class="code-box">
@@ -143,6 +150,7 @@
 &lt;/script&gt;</code></pre>
                 </div>
 
+                <!-- Web Code 2 -->
                 <h2>2. Login Verification</h2>
                 <p>This code protects your login form. The form is invisible until the user passes the security check.</p>
                 <div class="code-box">
@@ -160,6 +168,7 @@
 &lt;/script&gt;</code></pre>
                 </div>
 
+                <!-- Web Code 3 -->
                 <h2>3. Sign Up Verification</h2>
                 <p>Use this block to secure account creation. It requires Name, Surname, Email, Password, and Confirmation.</p>
                 <div class="code-box">
@@ -178,6 +187,7 @@
 &lt;/script&gt;</code></pre>
                 </div>
 
+                <!-- Web Code 4 -->
                 <h2>4. Master Code (Combination)</h2>
                 <p>This master code handles the first redirect, login, and signup simultaneously on a single page architecture.</p>
                 <div class="code-box">
@@ -200,47 +210,44 @@
                 </div>
             </div>
 
+            <!-- ================= ANDROID SECTION ================= -->
             <div id="tab-android" class="tab-content">
                 <h1>Android OS Integration</h1>
-                <p>Use these Kotlin/Java bridges to trigger the native Android UI after the web-based security layer is passed.</p>
+                <p>Paste these blocks into your app. They automatically inject the HGT Guardian JS link to protect your native screens.</p>
 
+                <!-- Android Code 1 -->
                 <h2>1. First Redirect (Gatekeeper)</h2>
-                <p>Intercepts the first app launch, holding the native UI until the WebView sends the VERIFIED signal.</p>
+                <p>Blocks initial app access. Loads the guardian directly in a hidden WebView string.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">MainActivity.kt / .java</span><button class="copy-btn" onclick="copyCode(this, 'c-and-1')">Copy Code</button></div>
-                    <pre><code id="c-and-1">// KOTLIN
+                    <pre><code id="c-and-1">// KOTLIN OR JAVA (Setup WebView)
 webView.settings.javaScriptEnabled = true
 webView.addJavascriptInterface(HGTBridge(this), "HGTBridge")
 
+// Load your JS file directly using an HTML String
+String hgtHtml = "<html><head><script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'></script></head><body><script>HGT_Guardian.init({ onSuccess: () => HGTBridge.postMessage('VERIFIED') });</script></body></html>";
+webView.loadData(hgtHtml, "text/html", "UTF-8");
+
+// The Listener Bridge
 class HGTBridge(val context: Context) {
     @JavascriptInterface
     fun postMessage(status: String) {
         if (status == "VERIFIED") { /* Remove Loading Screen, Show Home */ }
     }
-}
-
-// JAVA
-webView.getSettings().setJavaScriptEnabled(true);
-webView.addJavascriptInterface(new HGTBridge(this), "HGTBridge");
-
-public class HGTBridge {
-    Context mContext;
-    HGTBridge(Context c) { mContext = c; }
-    @JavascriptInterface
-    public void postMessage(String status) {
-        if (status.equals("VERIFIED")) { /* Remove Loading Screen, Show Home */ }
-    }
 }</code></pre>
                 </div>
 
+                <!-- Android Code 2 -->
                 <h2>2. Login Verification</h2>
-                <p>Protects the native Android Login Activity.</p>
+                <p>Protects the native Android Login Activity using the injected JS link.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">LoginActivity.kt</span><button class="copy-btn" onclick="copyCode(this, 'c-and-2')">Copy Code</button></div>
-                    <pre><code id="c-and-2">// KOTLIN
+                    <pre><code id="c-and-2">String hgtHtml = "<html><head><script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'></script></head><body><script>HGT_Guardian.init({ onSuccess: () => HGTBridge.postMessage('VERIFIED_LOGIN') });</script></body></html>";
+webView.loadData(hgtHtml, "text/html", "UTF-8");
+
 @JavascriptInterface
 fun postMessage(status: String) {
-    if (status == "VERIFIED") {
+    if (status == "VERIFIED_LOGIN") {
         runOnUiThread {
             findViewById&lt;LinearLayout&gt;(R.id.loginFormLayout).visibility = View.VISIBLE
         }
@@ -248,30 +255,36 @@ fun postMessage(status: String) {
 }</code></pre>
                 </div>
 
+                <!-- Android Code 3 -->
                 <h2>3. Sign Up Verification</h2>
-                <p>Protects the native Android Sign Up Activity.</p>
+                <p>Protects the native Android Sign Up Activity with the injected JS link.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">SignupActivity.kt</span><button class="copy-btn" onclick="copyCode(this, 'c-and-3')">Copy Code</button></div>
-                    <pre><code id="c-and-3">// KOTLIN
+                    <pre><code id="c-and-3">String hgtHtml = "<html><head><script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'></script></head><body><script>HGT_Guardian.init({ onSuccess: () => HGTBridge.postMessage('VERIFIED_SIGNUP') });</script></body></html>";
+webView.loadData(hgtHtml, "text/html", "UTF-8");
+
 @JavascriptInterface
 fun postMessage(status: String) {
-    if (status == "VERIFIED") {
+    if (status == "VERIFIED_SIGNUP") {
         runOnUiThread {
-            // Unlocks Name, Surname, Email, Pass, Confirm Pass Native Inputs
             findViewById&lt;LinearLayout&gt;(R.id.signupFormLayout).visibility = View.VISIBLE
         }
     }
 }</code></pre>
                 </div>
 
+                <!-- Android Code 4 -->
                 <h2>4. Master Code (Combination)</h2>
                 <p>A global Application-level bridge that handles routing for Gatekeeper, Login, and Signup dynamically.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">GlobalHGTBridge.kt</span><button class="copy-btn" onclick="copyCode(this, 'c-and-4')">Copy Code</button></div>
-                    <pre><code id="c-and-4">class GlobalHGTBridge(private val activity: Activity, private val viewType: String) {
+                    <pre><code id="c-and-4">String hgtHtml = "<html><head><script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'></script></head><body><script>HGT_Guardian.init({ onSuccess: () => HGTBridge.postMessage('VERIFIED_ALL') });</script></body></html>";
+webView.loadData(hgtHtml, "text/html", "UTF-8");
+
+class GlobalHGTBridge(private val activity: Activity, private val viewType: String) {
     @JavascriptInterface
     fun postMessage(status: String) {
-        if (status == "VERIFIED") {
+        if (status == "VERIFIED_ALL") {
             activity.runOnUiThread {
                 when(viewType) {
                     "GATEKEEPER" -> showMainAppUI()
@@ -281,73 +294,84 @@ fun postMessage(status: String) {
             }
         }
     }
-}
-// Usage: webView.addJavascriptInterface(GlobalHGTBridge(this, "SIGNUP"), "HGTBridge")</code></pre>
+}</code></pre>
                 </div>
             </div>
 
+            <!-- ================= IOS SECTION ================= -->
             <div id="tab-ios" class="tab-content">
                 <h1>iOS Swift Integration</h1>
-                <p>Utilize WebKit Handlers to manage the Apple iOS native UI based on HGT Guardian signals.</p>
+                <p>These snippets inject the HGT Guardian JS link via WKWebView to secure your native Apple iOS screens.</p>
 
+                <!-- iOS Code 1 -->
                 <h2>1. First Redirect (Gatekeeper)</h2>
-                <p>Blocks the initial View Controller progression until verification is completed.</p>
+                <p>Blocks initial progression. Loads the JS engine inside Swift directly.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">SceneDelegate.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-1')">Copy Code</button></div>
-                    <pre><code id="c-ios-1">func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+                    <pre><code id="c-ios-1">let htmlString = "&lt;html&gt;&lt;head&gt;&lt;script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; window.webkit.messageHandlers.HGTBridge.postMessage('VERIFIED') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"
+webView.loadHTMLString(htmlString, baseURL: nil)
+
+func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     if message.name == "HGTBridge", let status = message.body as? String {
         if status == "VERIFIED" {
-            // Transition from Launch Screen to Main Tab Bar Controller
             self.transitionToMainApp()
         }
     }
 }</code></pre>
                 </div>
 
+                <!-- iOS Code 2 -->
                 <h2>2. Login Verification</h2>
-                <p>Unlocks the native SwiftUI / UIKit Login TextFields.</p>
+                <p>Unlocks the native Login TextFields upon JS completion.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">LoginViewController.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-2')">Copy Code</button></div>
-                    <pre><code id="c-ios-2">func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    if message.name == "HGTBridge", let status = message.body as? String {
-        if status == "VERIFIED" {
-            DispatchQueue.main.async {
-                self.emailTextField.isHidden = false
-                self.passwordTextField.isHidden = false
-                self.loginButton.isHidden = false
-            }
+                    <pre><code id="c-ios-2">let htmlString = "&lt;html&gt;&lt;head&gt;&lt;script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; window.webkit.messageHandlers.HGTBridge.postMessage('VERIFIED_LOGIN') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"
+webView.loadHTMLString(htmlString, baseURL: nil)
+
+func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    if message.name == "HGTBridge", let status = message.body as? String, status == "VERIFIED_LOGIN" {
+        DispatchQueue.main.async {
+            self.emailTextField.isHidden = false
+            self.passwordTextField.isHidden = false
+            self.loginButton.isHidden = false
         }
     }
 }</code></pre>
                 </div>
 
+                <!-- iOS Code 3 -->
                 <h2>3. Sign Up Verification</h2>
-                <p>Unlocks the native Sign Up TextFields (Name, Surname, Email, Password).</p>
+                <p>Unlocks the native Sign Up TextFields upon JS completion.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">SignupViewController.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-3')">Copy Code</button></div>
-                    <pre><code id="c-ios-3">func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    if message.name == "HGTBridge", let status = message.body as? String {
-        if status == "VERIFIED" {
-            DispatchQueue.main.async {
-                self.signupFormStackView.isHidden = false
-            }
+                    <pre><code id="c-ios-3">let htmlString = "&lt;html&gt;&lt;head&gt;&lt;script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; window.webkit.messageHandlers.HGTBridge.postMessage('VERIFIED_SIGNUP') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"
+webView.loadHTMLString(htmlString, baseURL: nil)
+
+func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    if message.name == "HGTBridge", let status = message.body as? String, status == "VERIFIED_SIGNUP" {
+        DispatchQueue.main.async {
+            self.signupFormStackView.isHidden = false
         }
     }
 }</code></pre>
                 </div>
 
+                <!-- iOS Code 4 -->
                 <h2>4. Master Code (Combination)</h2>
-                <p>A unified Handler extension that processes all HGT signals app-wide.</p>
+                <p>Unified Handler extension loading the global JS link.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">HGTManager.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-4')">Copy Code</button></div>
-                    <pre><code id="c-ios-4">extension UIViewController: WKScriptMessageHandler {
+                    <pre><code id="c-ios-4">let htmlString = "&lt;html&gt;&lt;head&gt;&lt;script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; window.webkit.messageHandlers.HGTBridge.postMessage('VERIFIED_ALL') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"
+webView.loadHTMLString(htmlString, baseURL: nil)
+
+extension UIViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard message.name == "HGTBridge", let status = message.body as? String, status == "VERIFIED" else { return }
+        guard message.name == "HGTBridge", let status = message.body as? String, status == "VERIFIED_ALL" else { return }
         
         DispatchQueue.main.async {
             if self is LoginViewController { (self as! LoginViewController).unlockForm() }
             else if self is SignupViewController { (self as! SignupViewController).unlockForm() }
-            else { self.dismiss(animated: true) } // Default Gatekeeper unlock
+            else { self.dismiss(animated: true) }
         }
     }
 }</code></pre>
@@ -360,6 +384,7 @@ fun postMessage(status: String) {
             Powered by HGT, Henry Global Tech Industry
         </footer>
 
+        <!-- Bottom Navigation Menu -->
         <nav class="bottom-nav">
             <button class="nav-item active" id="btn-web" onclick="switchTab('web')">
                 <span class="nav-icon">&lt;/&gt;</span>
@@ -376,6 +401,7 @@ fun postMessage(status: String) {
         </nav>
     </div>
 
+    <!-- Application Logic -->
     <script>
         // Copy Code Functionality
         function copyCode(btn, targetId) {
@@ -410,4 +436,3 @@ fun postMessage(status: String) {
     </script>
 </body>
 </html>
-

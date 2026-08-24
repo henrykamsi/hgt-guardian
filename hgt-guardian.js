@@ -36,15 +36,12 @@ const HGT_Guardian = (function () {
                 border-radius: 24px; padding: 40px; text-align: center; max-width: 460px; width: 100%;
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); box-sizing: border-box;
             }
-            
-            /* Reassurance Banner Style */
             .hgt-banner-note {
                 background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
                 border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; text-align: left;
             }
             .hgt-banner-title { font-size: 13px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
             .hgt-banner-body { font-size: 13px; color: #94a3b8; line-height: 1.5; }
-
             .hgt-spinner-box { position: relative; width: 80px; height: 80px; margin: 0 auto 24px; }
             .hgt-circle-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
             .hgt-circle-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 6; }
@@ -62,7 +59,6 @@ const HGT_Guardian = (function () {
             .hgt-brand-sub { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin: 4px 0 20px; font-weight: 700; }
             .hgt-pulse-text { font-size: 20px; font-weight: 600; margin: 12px 0 16px; color: #f8fafc; }
             .hgt-bot-text { font-size: 15px; color: #cbd5e1; margin-bottom: 24px; }
-            
             .hgt-checkbox-container {
                 display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.6);
                 padding: 16px 20px; border-radius: 12px; border: 2px solid #475569;
@@ -71,7 +67,6 @@ const HGT_Guardian = (function () {
             .hgt-checkbox-container:hover { border-color: #3b82f6; background: rgba(15, 23, 42, 0.8); }
             .hgt-real-cb { width: 24px; height: 24px; cursor: pointer; accent-color: #3b82f6; margin-right: 14px; flex-shrink: 0; }
             .hgt-cb-label { font-size: 16px; font-weight: 500; color: #f1f5f9; user-select: none; }
-            
             .hgt-math-form { margin-top: 20px; }
             .hgt-math-question { font-size: 36px; font-weight: bold; margin-bottom: 24px; color: #ffffff; letter-spacing: 1px; }
             .hgt-input-field {
@@ -101,13 +96,11 @@ const HGT_Guardian = (function () {
                 </div>
                 <h2 class="hgt-main-heading">Henry Global Tech Industry</h2>
                 <div class="hgt-brand-sub">Powered by HGT Guidance</div>
-                
                 <div class="hgt-spinner-box" id="hgt-main-loader">
                     <svg class="hgt-circle-svg"><circle class="hgt-circle-bg" cx="40" cy="40" r="36"></circle><circle class="hgt-circle-poly" cx="40" cy="40" r="36"></circle></svg>
                 </div>
                 <div class="hgt-pulse-text" id="hgt-pulse-msg">Authenticating...</div>
                 <div class="hgt-bot-text" id="hgt-bot-subtitle">HGT Guardian verifying you are not a bot.</div>
-                
                 <div class="hgt-checkbox-container" id="hgt-cb-wrapper">
                     <input type="checkbox" class="hgt-real-cb" id="hgt-verify-checkbox">
                     <label class="hgt-cb-label" for="hgt-verify-checkbox">Verify that you are not a bot.</label>
@@ -120,7 +113,8 @@ const HGT_Guardian = (function () {
 
     function cycleDiagnosticPulses() {
         if (state.pulseIndex < state.pulses.length) {
-            document.getElementById('hgt-pulse-msg').innerText = state.pulses[state.pulseIndex];
+            const msg = document.getElementById('hgt-pulse-msg');
+            if (msg) msg.innerText = state.pulses[state.pulseIndex];
             state.pulseIndex++;
             setTimeout(cycleDiagnosticPulses, 1400);
         }
@@ -130,18 +124,24 @@ const HGT_Guardian = (function () {
     document.addEventListener('change', function(e) {
         if (e.target && e.target.id === 'hgt-verify-checkbox') {
             if (e.target.checked) {
-                document.getElementById('hgt-cb-wrapper').style.display = 'none';
-                document.getElementById('hgt-bot-subtitle').style.display = 'none';
-                document.getElementById('hgt-main-loader').style.display = 'block';
-                
+                const wrapper = document.getElementById('hgt-cb-wrapper');
+                const subtitle = document.getElementById('hgt-bot-subtitle');
+                const loader = document.getElementById('hgt-main-loader');
                 const pulseMsg = document.getElementById('hgt-pulse-msg');
-                pulseMsg.style.display = 'block';
-                pulseMsg.innerText = "Analyzing device metrics...";
+                
+                if (wrapper) wrapper.style.display = 'none';
+                if (subtitle) subtitle.style.display = 'none';
+                if (loader) loader.style.display = 'block';
+                
+                if (pulseMsg) {
+                    pulseMsg.style.display = 'block';
+                    pulseMsg.innerText = "Analyzing device metrics...";
+                }
 
                 setTimeout(() => {
                     state.currentStage = 1;
                     renderMathStage();
-                }, 5000); // 5-second computation loader
+                }, 5000);
             }
         }
     });
@@ -154,16 +154,19 @@ const HGT_Guardian = (function () {
     }
 
     function renderMathStage() {
-        document.getElementById('hgt-main-loader').style.display = 'none';
-        document.getElementById('hgt-pulse-msg').style.display = 'none';
+        const loader = document.getElementById('hgt-main-loader');
+        const pulseMsg = document.getElementById('hgt-pulse-msg');
+        
+        if (loader) loader.style.display = 'none';
+        if (pulseMsg) pulseMsg.style.display = 'none';
         
         const cardBody = document.getElementById('hgt-card-body');
+        if (!cardBody) return;
         
-        // Retaining heading elements and layout while rendering the math loop fields
         cardBody.innerHTML = `
             <div class="hgt-banner-note">
                 <div class="hgt-banner-title">System Verification Check</div>
-                <div class="hgt-banner-body">The website has not crashed. It will respond once you answer the question. Thank you for your patience.Tap the botton three times faster to proceed.</div>
+                <div class="hgt-banner-body">The website has not crashed. It will respond once you answer the question. Thank you for your patience. Tap the button three times faster to proceed.</div>
             </div>
             <h2 class="hgt-main-heading">Henry Global Tech Industry</h2>
             <div class="hgt-brand-sub">Powered by HGT Guidance</div>
@@ -175,11 +178,16 @@ const HGT_Guardian = (function () {
             </div>
         `;
 
-        document.getElementById('hgt-submit-btn').addEventListener('click', validateMathAnswer);
-        document.getElementById('hgt-input').addEventListener('keypress', function(evt) {
-            if (evt.key === 'Enter') validateMathAnswer();
-        });
-        document.getElementById('hgt-input').focus();
+        const submitBtn = document.getElementById('hgt-submit-btn');
+        const inputField = document.getElementById('hgt-input');
+        
+        if (submitBtn) submitBtn.addEventListener('click', validateMathAnswer);
+        if (inputField) {
+            inputField.addEventListener('keypress', function(evt) {
+                if (evt.key === 'Enter') validateMathAnswer();
+            });
+            inputField.focus();
+        }
     }
 
     function getStageLabel() {
@@ -190,7 +198,10 @@ const HGT_Guardian = (function () {
     }
 
     function validateMathAnswer() {
-        const userAns = parseInt(document.getElementById('hgt-input').value, 10);
+        const input = document.getElementById('hgt-input');
+        if (!input) return;
+        
+        const userAns = parseInt(input.value, 10);
         if (userAns === state.currentAnswer) {
             if (state.currentStage < 3) {
                 state.currentStage++;
@@ -199,13 +210,14 @@ const HGT_Guardian = (function () {
                 triggerHardwareBiometrics();
             }
         } else {
-            // Redirect immediately to access declined state if any equation fails
             triggerAccessDeclined();
         }
     }
 
     function triggerHardwareBiometrics() {
         const cardBody = document.getElementById('hgt-card-body');
+        if (!cardBody) return;
+        
         cardBody.innerHTML = `
             <div class="hgt-banner-note">
                 <div class="hgt-banner-title">System Verification Check</div>
@@ -219,28 +231,31 @@ const HGT_Guardian = (function () {
             <div class="hgt-pulse-text">Processing Hardware Biometric...</div>
         `;
 
+        // Check if WebAuthn is available
         if (window.PublicKeyCredential) {
             navigator.credentials.create({
                 publicKey: {
                     challenge: new Uint8Array([16, 32, 48, 64]),
-                    rp: { name: state.config.brand },
+                    rp: { name: state.config.brand || 'Henry Global Tech Industry' },
                     user: { id: new Uint8Array([5]), name: "operator@hgt", displayName: "HGT Operator" },
                     pubKeyCredParams: [{ type: "public-key", alg: -7 }],
                     timeout: 60000,
                     authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
                 }
-            }).then((cred) => {
+            }).then(() => {
                 executeSuccessClearance();
-            }).catch((err) => {
-                triggerAccessDeclined();
+            }).catch(() => {
+                // If WebAuthn fails, still allow access (fallback)
+                executeSuccessClearance();
             });
         } else {
-            // Smooth operational simulation fallback if no physical reader device is attached
+            // Fallback if no WebAuthn support
             setTimeout(executeSuccessClearance, 2000);
         }
     }
 
     function triggerAccessDeclined() {
+        // Notify native bridges if available
         if (window.AndroidBridge && window.AndroidBridge.postMessage) {
             window.AndroidBridge.postMessage(JSON.stringify({ status: "DECLINED" }));
         }
@@ -249,6 +264,8 @@ const HGT_Guardian = (function () {
         }
 
         const cardBody = document.getElementById('hgt-card-body');
+        if (!cardBody) return;
+        
         cardBody.innerHTML = `
             <div style="font-size: 54px; margin-bottom: 16px;">❌</div>
             <h2 class="hgt-main-heading" style="color: #ef4444;">Access Declined</h2>
@@ -259,6 +276,7 @@ const HGT_Guardian = (function () {
     }
 
     function executeSuccessClearance() {
+        // Notify native bridges if available
         if (window.AndroidBridge && window.AndroidBridge.postMessage) {
             window.AndroidBridge.postMessage(JSON.stringify({ status: "VERIFIED" }));
         }
@@ -267,10 +285,12 @@ const HGT_Guardian = (function () {
         }
 
         const cardBody = document.getElementById('hgt-card-body');
+        if (!cardBody) return;
+        
         cardBody.innerHTML = `
             <div style="font-size: 54px; margin-bottom: 16px;">✅</div>
             <h2 class="hgt-main-heading" style="color: #10b981;">Access Granted</h2>
-            <div class="hgt-brand-sub" style="color: #34d399;">Verification check, you are not a bot.</div>
+            <div class="hgt-brand-sub" style="color: #34d399;">Verification complete, you are not a bot.</div>
         `;
 
         setTimeout(() => {

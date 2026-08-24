@@ -3,77 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <meta name="google-site-verification" content="ZxvYybyg9963-ltKszRxcviAPkYag5UuGqjlJLMqtww" />
-    
     <title>HGT Guidance | Developer SDK</title>
 
-    
     <style>
         /* Modern CSS Variables & Theme Handling */
         :root[data-theme="dark"] {
-            --bg-base: #0f172a; --bg-surface: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8;
-            --accent: #3b82f6; --border: #334155; --nav-bg: rgba(30, 41, 59, 0.95);
+            --bg-base: #0f172a;
+            --bg-surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --border: #334155;
+            --nav-bg: rgba(30, 41, 59, 0.95);
             --success: #10b981;
         }
         :root[data-theme="light"] {
-            --bg-base: #f1f5f9; --bg-surface: #ffffff; --text-main: #0f172a; --text-muted: #475569;
-            --accent: #2563eb; --border: #cbd5e1; --nav-bg: rgba(255, 255, 255, 0.95);
+            --bg-base: #f1f5f9;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --accent: #2563eb;
+            --border: #cbd5e1;
+            --nav-bg: rgba(255, 255, 255, 0.95);
             --success: #059669;
         }
 
         body {
-            background-color: var(--bg-base); color: var(--text-main);
+            background-color: var(--bg-base);
+            color: var(--text-main);
             font-family: system-ui, -apple-system, sans-serif;
-            margin: 0; padding: 0; min-height: 100vh; transition: all 0.3s ease;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            transition: all 0.3s ease;
         }
 
         /* --- THE GATEKEEPER UI FIX --- */
         #hgt-guardian-gate {
-            position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-            background: var(--bg-base); z-index: 9999;
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-base);
+            z-index: 9999;
         }
-        
+
         /* App UI (Hidden until verified) */
-        #hgt-main-app { display: none; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; padding-bottom: 100px; }
-        
-        header { padding: 20px; border-bottom: 1px solid var(--border); background: var(--bg-surface); display: flex; justify-content: space-between; align-items: center; }
-        .header-brand h1 { margin: 0; font-size: 20px; color: var(--accent); }
-        .attribution { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-style: italic; }
-        .theme-btn { background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        #hgt-main-app {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            padding-bottom: 100px;
+        }
 
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-brand h1 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--accent);
+        }
+        .attribution {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .theme-btn {
+            background: var(--bg-base);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-        h2 { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 30px; }
-        p { line-height: 1.6; color: var(--text-muted); }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        p {
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
 
         /* Code Blocks */
-        .code-box { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 30px; overflow: hidden; }
-        .code-header { background: rgba(0,0,0,0.05); padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .code-title { font-weight: bold; font-size: 14px; color: var(--accent); }
-        .copy-btn { background: var(--accent); color: white; border: none; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
-        pre { margin: 0; padding: 16px; overflow-x: auto; font-size: 13px; color: var(--text-main); font-family: monospace; white-space: pre-wrap; }
+        .code-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .code-header {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .code-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--accent);
+        }
+        .copy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 13px;
+            color: var(--text-main);
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
 
         /* Footer & Nav */
-        footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 14px; font-weight: bold; }
-        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0 calc(15px + env(safe-area-inset-bottom));
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0 calc(15px + env(safe-area-inset-bottom));
             z-index: 9000;
         }
-        .nav-item { background: none; border: none; color: var(--text-muted); font-size: 14px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; width: 33%; }
-        .nav-item.active { color: var(--accent); }
-        .nav-icon { font-size: 22px; font-weight: normal; }
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            width: 33%;
+        }
+        .nav-item.active {
+            color: var(--accent);
+        }
+        .nav-icon {
+            font-size: 22px;
+            font-weight: normal;
+        }
     </style>
 </head>
 <body>
 
     <div id="hgt-guardian-gate">
+        <!-- Loading indicator while script loads -->
+        <div style="text-align: center; color: var(--text-muted);">
+            <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+            <h2 style="color: var(--accent);">HGT Security SDK</h2>
+            <p>Loading security engine...</p>
         </div>
+    </div>
 
     <div id="hgt-main-app">
         <header>
@@ -264,29 +406,82 @@ extension ViewController: WKScriptMessageHandler {
         </nav>
     </div>
 
+    <!-- Load HGT Guardian SDK -->
+    <script src="https://guardiansdk.henryglobaltech.name.ng/hgt-guardian.js"></script>
+
     <script>
         // --- 1. GUARDIAN INITIALIZATION ---
-        window.addEventListener('load', function() {
+        function initGuardian() {
             if (typeof HGT_Guardian !== 'undefined') {
                 HGT_Guardian.init({
                     brand: 'HGT Security SDK',
                     mode: 'full',
                     onSuccess: function() {
                         // Verification Passed: Hide Gate, Show SDK
-                        document.getElementById('hgt-guardian-gate').style.display = 'none';
+                        const gate = document.getElementById('hgt-guardian-gate');
                         const app = document.getElementById('hgt-main-app');
+                        
+                        gate.style.display = 'none';
                         app.style.display = 'block';
                         
                         // Fade in effect
-                        setTimeout(() => { 
-                            app.style.opacity = "1"; 
-                            app.style.transform = "translateY(0)"; 
+                        setTimeout(() => {
+                            app.style.opacity = "1";
+                            app.style.transform = "translateY(0)";
                         }, 50);
                     }
                 });
             } else {
-                document.getElementById('hgt-guardian-gate').innerHTML = "<h2 style='color:red;'>HGT Engine failed to load. Check your network or GitHub link.</h2>";
+                // Script didn't load - show error with retry option
+                const gate = document.getElementById('hgt-guardian-gate');
+                gate.innerHTML = `
+                    <div style="text-align: center; max-width: 400px; padding: 20px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                        <h2 style="color: #ef4444;">HGT Engine Failed to Load</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">
+                            The security engine could not be loaded. Please check your network connection or try again.
+                        </p>
+                        <button onclick="location.reload()" style="
+                            background: var(--accent);
+                            color: white;
+                            border: none;
+                            padding: 12px 32px;
+                            border-radius: 8px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">Retry</button>
+                        <button onclick="bypassGuardian()" style="
+                            background: transparent;
+                            color: var(--text-muted);
+                            border: 1px solid var(--border);
+                            padding: 12px 32px;
+                            border-radius: 8px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            cursor: pointer;
+                            margin-left: 10px;
+                        ">Continue Anyway</button>
+                    </div>
+                `;
             }
+        }
+
+        // Emergency bypass for testing
+        function bypassGuardian() {
+            document.getElementById('hgt-guardian-gate').style.display = 'none';
+            const app = document.getElementById('hgt-main-app');
+            app.style.display = 'block';
+            setTimeout(() => {
+                app.style.opacity = "1";
+                app.style.transform = "translateY(0)";
+            }, 50);
+        }
+
+        // Load guardian after page is ready
+        window.addEventListener('load', function() {
+            // Give the script a moment to load
+            setTimeout(initGuardian, 300);
         });
 
         // --- 2. SDK UTILITY FUNCTIONS ---
@@ -306,7 +501,7 @@ extension ViewController: WKScriptMessageHandler {
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
+
             document.getElementById('tab-' + tab).classList.add('active');
             document.getElementById('btn-' + tab).classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -319,4 +514,4 @@ extension ViewController: WKScriptMessageHandler {
         }
     </script>
 </body>
-</html>
+    </html>

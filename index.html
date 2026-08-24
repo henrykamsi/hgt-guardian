@@ -98,7 +98,7 @@
 &lt;head&gt;
     &lt;!-- Hides body entirely --&gt;
     &lt;style&gt; body { display: none; } &lt;/style&gt;
-    &lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
+    &lt;script src="https://guardiansdk.henryglobaltech.name.ng/hgt-guardian.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div id="protected-content"&gt;Your Website Content Here&lt;/div&gt;
@@ -127,7 +127,7 @@
     &lt;input type="password" placeholder="Password"&gt;
     &lt;button&gt;Login&lt;/button&gt;
 &lt;/div&gt;
-&lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
+&lt;script src="https://guardiansdk.henryglobaltech.name.ng/hgt-guardian.js"&gt;&lt;/script&gt;
 &lt;script&gt;
     window.addEventListener('load', function() {
         HGT_Guardian.init({ 
@@ -152,7 +152,7 @@
     &lt;input type="password" placeholder="Confirm Password"&gt;
     &lt;button&gt;Sign Up&lt;/button&gt;
 &lt;/div&gt;
-&lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
+&lt;script src="https://guardiansdk.henryglobaltech.name.ng/hgt-guardian.js"&gt;&lt;/script&gt;
 &lt;script&gt;
     window.addEventListener('load', function() {
         HGT_Guardian.init({ 
@@ -175,7 +175,7 @@
 &lt;div id="login-view" class="hgt-secure-zone"&gt;&lt;input type="email"&gt;&lt;button&gt;Login&lt;/button&gt;&lt;/div&gt;
 &lt;div id="signup-view" class="hgt-secure-zone"&gt;&lt;input type="text"&gt;&lt;button&gt;Sign Up&lt;/button&gt;&lt;/div&gt;
 
-&lt;script src="https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js"&gt;&lt;/script&gt;
+&lt;script src="https://guardiansdk.henryglobaltech.name.ng/hgt-guardian.js"&gt;&lt;/script&gt;
 &lt;script&gt;
     window.addEventListener('load', function() {
         HGT_Guardian.init({
@@ -202,7 +202,7 @@ webView.getSettings().setDomStorageEnabled(true);
 webView.setWebChromeClient(new WebChromeClient());
 
 // Inject HTML Container & Link Script
-String hgtHtml = "&lt;html&gt;&lt;body&gt;&lt;script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'&gt;&lt;/script&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; HGTBridge.postMessage('VERIFIED') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;";
+String hgtHtml = "&lt;html&gt;&lt;body&gt;&lt;script src='https://guardiansdk.henryglobaltech.name.ng/hgt-guardian.js'&gt;&lt;/script&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; HGTBridge.postMessage('VERIFIED') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;";
 webView.loadData(hgtHtml, "text/html", "UTF-8");
 
 // Listen for Success
@@ -225,7 +225,7 @@ webView.addJavascriptInterface(new Object() {
                 <p>Inject the HGT Guardian JS link via WKWebView to secure native Apple screens.</p>
                 <div class="code-box">
                     <div class="code-header"><span class="code-title">ViewController.swift</span><button class="copy-btn" onclick="copyCode(this, 'c-ios-1')">Copy Code</button></div>
-                    <pre><code id="c-ios-1">let htmlString = "&lt;html&gt;&lt;body&gt;&lt;script src='https://henrykamsi.github.io/hgt-guardian/hgt-guardian.js'&gt;&lt;/script&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; window.webkit.messageHandlers.HGTBridge.postMessage('VERIFIED') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"
+                    <pre><code id="c-ios-1">let htmlString = "&lt;html&gt;&lt;body&gt;&lt;script src='https://guardiansdk.henryglobaltech.name.ng/hgt-guardian.js'&gt;&lt;/script&gt;&lt;script&gt;HGT_Guardian.init({ onSuccess: () =&gt; window.webkit.messageHandlers.HGTBridge.postMessage('VERIFIED') });&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"
 webView.loadHTMLString(htmlString, baseURL: nil)
 
 extension ViewController: WKScriptMessageHandler {
